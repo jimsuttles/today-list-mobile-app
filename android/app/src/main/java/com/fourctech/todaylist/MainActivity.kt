@@ -21,6 +21,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
 import com.fourctech.todaylist.core.notifications.ReminderIntents
 import com.fourctech.todaylist.domain.model.ThemeMode
 import com.fourctech.todaylist.domain.repository.SettingsRepository
@@ -37,12 +39,16 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
 
+    @Inject
+    lateinit var analytics: Analytics
+
     private val rolloverViewModel: RolloverViewModel by viewModels()
     private val deepLinkTaskIdState = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         deepLinkTaskIdState.value = taskIdFromIntent(intent)
+        analytics.log(AnalyticsEvents.APP_OPEN)
         enableEdgeToEdge()
         setContent {
             val settings by settingsRepository.observeSettings()

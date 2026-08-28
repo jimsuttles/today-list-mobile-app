@@ -50,8 +50,9 @@ class CompleteAndRecreateUseCaseTest {
         )
         historyRepository = RoomHistoryRepository(database.completionEventDao())
         notifications = FakeNotificationScheduler()
-        completeTask = CompleteTaskUseCase(taskRepository, notifications)
-        undoComplete = UndoCompleteTaskUseCase(taskRepository)
+        val analytics = com.fourctech.todaylist.core.analytics.FakeAnalytics()
+        completeTask = CompleteTaskUseCase(taskRepository, notifications, analytics)
+        undoComplete = UndoCompleteTaskUseCase(taskRepository, analytics)
         recreate = RecreateTaskFromHistoryUseCase(historyRepository, taskRepository)
     }
 

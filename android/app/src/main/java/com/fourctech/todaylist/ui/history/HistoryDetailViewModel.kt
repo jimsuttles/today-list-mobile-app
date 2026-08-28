@@ -3,6 +3,10 @@ package com.fourctech.todaylist.ui.history
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
+import com.fourctech.todaylist.core.analytics.toAnalyticsValue
 import com.fourctech.todaylist.domain.model.CompletionRecord
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.repository.HistoryRepository
@@ -29,6 +33,7 @@ class HistoryDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val historyRepository: HistoryRepository,
     private val recreateTaskFromHistory: RecreateTaskFromHistoryUseCase,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     private val completionId: String = checkNotNull(savedStateHandle[Route.HistoryDetail.arg])
@@ -56,6 +61,10 @@ class HistoryDetailViewModel @Inject constructor(
             val created = recreateTaskFromHistory(completionId, location)
             _uiState.value = _uiState.value.copy(recreating = false)
             if (created != null) {
+                analytics.log(
+                    AnalyticsEvents.HISTORY_RECREATED,
+                    mapOf(AnalyticsParams.LOCATION to location.toAnalyticsValue()),
+                )
                 _recreated.emit(location)
             }
         }

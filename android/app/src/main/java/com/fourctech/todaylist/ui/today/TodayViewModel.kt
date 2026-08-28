@@ -2,6 +2,9 @@ package com.fourctech.todaylist.ui.today
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.repository.TaskRepository
@@ -30,6 +33,7 @@ class TodayViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val completeTaskUseCase: CompleteTaskUseCase,
     private val undoCompleteTaskUseCase: UndoCompleteTaskUseCase,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     private val sessionCompleted = MutableStateFlow(0)
@@ -59,7 +63,13 @@ class TodayViewModel @Inject constructor(
     }
 
     fun moveToLater(taskId: String) {
-        viewModelScope.launch { taskRepository.moveToLater(taskId) }
+        viewModelScope.launch {
+            taskRepository.moveToLater(taskId)
+            analytics.log(
+                AnalyticsEvents.TASK_MOVED,
+                mapOf(AnalyticsParams.TO_LOCATION to AnalyticsParams.LOCATION_LATER),
+            )
+        }
     }
 
     fun moveUp(taskId: String) {

@@ -2,6 +2,9 @@ package com.fourctech.todaylist.ui.later
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.repository.TaskRepository
@@ -28,6 +31,7 @@ class LaterViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     private val completeTaskUseCase: CompleteTaskUseCase,
     private val undoCompleteTaskUseCase: UndoCompleteTaskUseCase,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     private val _undoEvents = MutableSharedFlow<CompleteTaskResult>(extraBufferCapacity = 1)
@@ -51,7 +55,13 @@ class LaterViewModel @Inject constructor(
     }
 
     fun moveToToday(taskId: String) {
-        viewModelScope.launch { taskRepository.moveToToday(taskId) }
+        viewModelScope.launch {
+            taskRepository.moveToToday(taskId)
+            analytics.log(
+                AnalyticsEvents.TASK_MOVED,
+                mapOf(AnalyticsParams.TO_LOCATION to AnalyticsParams.LOCATION_TODAY),
+            )
+        }
     }
 
     fun moveUp(taskId: String) {

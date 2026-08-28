@@ -34,6 +34,14 @@ abstract class CoreModule {
     @Singleton
     abstract fun bindRecurrenceEngine(impl: DefaultRecurrenceEngine): RecurrenceEngine
 
+    @Binds
+    @Singleton
+    abstract fun bindAnalytics(impl: com.fourctech.todaylist.core.analytics.FirebaseBackedAnalytics): com.fourctech.todaylist.core.analytics.Analytics
+
+    @Binds
+    @Singleton
+    abstract fun bindCrashReporter(impl: com.fourctech.todaylist.core.analytics.FirebaseCrashReporter): com.fourctech.todaylist.core.analytics.CrashReporter
+
     companion object {
         @Provides
         @Singleton

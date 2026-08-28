@@ -2,6 +2,8 @@ package com.fourctech.todaylist.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
 import com.fourctech.todaylist.domain.model.CompletionRecord
 import com.fourctech.todaylist.domain.repository.HistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +26,12 @@ data class HistoryUiState(
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     historyRepository: HistoryRepository,
+    analytics: Analytics,
 ) : ViewModel() {
+
+    init {
+        analytics.log(AnalyticsEvents.HISTORY_OPENED)
+    }
 
     val uiState: StateFlow<HistoryUiState> = historyRepository.observeHistory()
         .map { records ->

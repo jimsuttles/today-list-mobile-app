@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
 import dagger.hilt.android.EntryPointAccessors
 
 class CompleteTodayTaskAction : ActionCallback {
@@ -17,7 +18,7 @@ class CompleteTodayTaskAction : ActionCallback {
             context.applicationContext,
             TodayWidgetEntryPoint::class.java,
         )
-        entryPoint.completeTaskUseCase().invoke(taskId)
+        entryPoint.completeTaskUseCase().invoke(taskId, AnalyticsParams.SOURCE_WIDGET)
         TodayGlanceWidget().update(context, glanceId)
     }
 

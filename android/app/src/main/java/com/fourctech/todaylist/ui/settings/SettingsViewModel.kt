@@ -2,6 +2,10 @@ package com.fourctech.todaylist.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
+import com.fourctech.todaylist.core.analytics.toAnalyticsValue
 import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.domain.model.AppSettings
 import com.fourctech.todaylist.domain.model.RolloverMode
@@ -23,6 +27,7 @@ class SettingsViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val taskRepository: TaskRepository,
     private val notificationScheduler: NotificationScheduler,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     val uiState: StateFlow<AppSettings> = settingsRepository.observeSettings()
@@ -33,23 +38,53 @@ class SettingsViewModel @Inject constructor(
         )
 
     fun setThemeMode(mode: ThemeMode) {
-        viewModelScope.launch { settingsRepository.setThemeMode(mode) }
+        viewModelScope.launch {
+            settingsRepository.setThemeMode(mode)
+            analytics.log(
+                AnalyticsEvents.SETTINGS_THEME_CHANGED,
+                mapOf(AnalyticsParams.THEME to mode.toAnalyticsValue()),
+            )
+        }
     }
 
     fun setRolloverMode(mode: RolloverMode) {
-        viewModelScope.launch { settingsRepository.setRolloverMode(mode) }
+        viewModelScope.launch {
+            settingsRepository.setRolloverMode(mode)
+            analytics.log(
+                AnalyticsEvents.SETTINGS_ROLLOVER_CHANGED,
+                mapOf(AnalyticsParams.MODE to mode.toAnalyticsValue()),
+            )
+        }
     }
 
     fun setWeekStart(weekStart: WeekStart) {
-        viewModelScope.launch { settingsRepository.setWeekStart(weekStart) }
+        viewModelScope.launch {
+            settingsRepository.setWeekStart(weekStart)
+            analytics.log(
+                AnalyticsEvents.SETTINGS_WEEK_START_CHANGED,
+                mapOf(AnalyticsParams.WEEK_START to weekStart.toAnalyticsValue()),
+            )
+        }
     }
 
     fun setHapticsEnabled(enabled: Boolean) {
-        viewModelScope.launch { settingsRepository.setHapticsEnabled(enabled) }
+        viewModelScope.launch {
+            settingsRepository.setHapticsEnabled(enabled)
+            analytics.log(
+                AnalyticsEvents.SETTINGS_HAPTICS_CHANGED,
+                mapOf(AnalyticsParams.ENABLED to enabled),
+            )
+        }
     }
 
     fun clearHistory() {
-        viewModelScope.launch { historyRepository.clearHistory() }
+        viewModelScope.launch {
+            historyRepository.clearHistory()
+            analytics.log(
+                AnalyticsEvents.DATA_CLEARED,
+                mapOf(AnalyticsParams.KIND to AnalyticsParams.KIND_HISTORY),
+            )
+        }
     }
 
     fun deleteAllData() {
@@ -59,6 +94,10 @@ class SettingsViewModel @Inject constructor(
             }
             taskRepository.deleteAllUserContent()
             settingsRepository.resetPreferencesKeepingEntitlement()
+            analytics.log(
+                AnalyticsEvents.DATA_CLEARED,
+                mapOf(AnalyticsParams.KIND to AnalyticsParams.KIND_ALL),
+            )
         }
     }
 }

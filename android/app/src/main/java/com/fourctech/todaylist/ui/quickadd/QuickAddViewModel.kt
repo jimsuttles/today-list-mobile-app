@@ -2,6 +2,10 @@ package com.fourctech.todaylist.ui.quickadd
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
+import com.fourctech.todaylist.core.analytics.toAnalyticsValue
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +26,7 @@ data class QuickAddUiState(
 @HiltViewModel
 class QuickAddViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QuickAddUiState())
@@ -47,7 +52,12 @@ class QuickAddViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
-            taskRepository.createTask(title = title, location = _uiState.value.location)
+            val location = _uiState.value.location
+            taskRepository.createTask(title = title, location = location)
+            analytics.log(
+                AnalyticsEvents.TASK_CREATED,
+                mapOf(AnalyticsParams.LOCATION to location.toAnalyticsValue()),
+            )
             _uiState.update { it.copy(isSaving = false, title = "") }
             onSaved()
         }

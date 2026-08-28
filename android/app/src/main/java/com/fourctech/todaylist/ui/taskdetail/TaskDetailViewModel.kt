@@ -3,6 +3,10 @@ package com.fourctech.todaylist.ui.taskdetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.analytics.Analytics
+import com.fourctech.todaylist.core.analytics.AnalyticsEvents
+import com.fourctech.todaylist.core.analytics.AnalyticsParams
+import com.fourctech.todaylist.core.analytics.toAnalyticsValue
 import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.core.time.ClockProvider
 import com.fourctech.todaylist.domain.model.DeleteScope
@@ -53,6 +57,7 @@ class TaskDetailViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val notificationScheduler: NotificationScheduler,
     private val clock: ClockProvider,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     private val taskId: String = checkNotNull(savedStateHandle[Route.TaskDetail.arg])
@@ -128,6 +133,10 @@ class TaskDetailViewModel @Inject constructor(
         viewModelScope.launch {
             settingsRepository.setNotificationPermissionPrompted(true)
             _uiState.update { it.copy(needsNotificationPermission = false) }
+            analytics.log(
+                AnalyticsEvents.NOTIFICATION_PERMISSION,
+                mapOf(AnalyticsParams.GRANTED to granted),
+            )
             if (!granted) {
                 _events.emit(TaskDetailEvent.NotificationPermissionDenied)
             }
@@ -171,6 +180,10 @@ class TaskDetailViewModel @Inject constructor(
             flushSave()
             notificationScheduler.cancelReminder(taskId)
             taskRepository.deleteTask(taskId, scope)
+            analytics.log(
+                AnalyticsEvents.TASK_DELETED,
+                mapOf(AnalyticsParams.SCOPE to scope.toAnalyticsValue()),
+            )
             _events.emit(TaskDetailEvent.Deleted)
         }
     }
@@ -219,9 +232,36 @@ class TaskDetailViewModel @Inject constructor(
         if (!meaningfulChange) return
 
         _uiState.update { it.copy(saving = true) }
+        val previousReminder = original.reminderAt
+        val previousRepeat = original.recurrence.toRepeatOption()
         taskRepository.updateTask(draft)
         val scheduledFor = syncReminderAlarm(draft)
         baseline = taskRepository.getTask(taskId) ?: draft
+
+        if (draft.location != original.location) {
+            analytics.log(
+                AnalyticsEvents.TASK_MOVED,
+                mapOf(AnalyticsParams.TO_LOCATION to draft.location.toAnalyticsValue()),
+            )
+        }
+        if (draft.recurrence.toRepeatOption() != previousRepeat) {
+            analytics.log(
+                AnalyticsEvents.REPEAT_SET,
+                mapOf(AnalyticsParams.REPEAT to draft.recurrence.toRepeatOption().toAnalyticsValue()),
+            )
+        }
+        when {
+            draft.reminderAt != null && previousReminder == null -> {
+                analytics.log(AnalyticsEvents.REMINDER_SET)
+            }
+            draft.reminderAt == null && previousReminder != null -> {
+                analytics.log(AnalyticsEvents.REMINDER_CLEARED)
+            }
+            draft.reminderAt != null && draft.reminderAt != previousReminder -> {
+                analytics.log(AnalyticsEvents.REMINDER_SET)
+            }
+        }
+
         if (scheduledFor != null && draft.reminderAt != null) {
             _events.emit(TaskDetailEvent.ReminderScheduled(scheduledFor))
         }
