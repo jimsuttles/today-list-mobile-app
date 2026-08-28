@@ -5,25 +5,27 @@ Package: `com.fourctech.todaylist`
 ## Dependencies
 
 - Kotlin 2.1 / AGP 8.8 / compileSdk 36 / minSdk 28
-- Jetpack Compose + Material 3 (shell only)
+- Jetpack Compose + Material 3
 - Room 2.6 + KSP (`exportSchema` → `app/schemas`)
 - Hilt 2.54
-- DataStore Preferences (dependency present for settings later)
+- DataStore Preferences (theme, rollover, week start, haptics, ads cache, last rollover, notification prompt)
 - Coroutines / Flow
-- Navigation Compose (dependency present; routes not wired yet)
+- Navigation Compose (Today / Later / History / Settings)
 - Test: JUnit, Truth, coroutines-test, Room testing, Robolectric
 
 ## Layout
 
 ```
 TodayListApplication
-MainActivity (placeholder Text only)
+MainActivity (loads settings → rollover stub → TodayListApp)
 core/time/ClockProvider, SystemClockProvider
-data/local/{entity,dao,converter,db}
-data/repository/RoomTaskRepository, TaskMappers
-domain/model/{Task,TaskLocation,RecurrenceRule,RecurrenceType}
-domain/repository/TaskRepository
-di/{DatabaseModule,RepositoryModule}
+data/local/{entity,dao,converter,db,prefs}
+data/repository/RoomTaskRepository, RoomHistoryRepository, DataStoreSettingsRepository
+domain/model/{Task,TaskLocation,RecurrenceRule,AppSettings,CompletionRecord,...}
+domain/repository/{TaskRepository,HistoryRepository,SettingsRepository}
+domain/rollover/RolloverStub
+di/{DatabaseModule,RepositoryModule,CoreModule}
+ui/{navigation,theme,today,later,history,settings,quickadd,components}
 ```
 
 ## Migration policy

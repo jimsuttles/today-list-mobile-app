@@ -1,8 +1,10 @@
 package com.fourctech.todaylist.di
 
-import com.fourctech.todaylist.core.time.ClockProvider
-import com.fourctech.todaylist.core.time.SystemClockProvider
+import com.fourctech.todaylist.data.repository.DataStoreSettingsRepository
+import com.fourctech.todaylist.data.repository.RoomHistoryRepository
 import com.fourctech.todaylist.data.repository.RoomTaskRepository
+import com.fourctech.todaylist.domain.repository.HistoryRepository
+import com.fourctech.todaylist.domain.repository.SettingsRepository
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import dagger.Binds
 import dagger.Module
@@ -19,5 +21,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindClockProvider(impl: SystemClockProvider): ClockProvider
+    abstract fun bindHistoryRepository(impl: RoomHistoryRepository): HistoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSettingsRepository(impl: DataStoreSettingsRepository): SettingsRepository
 }
