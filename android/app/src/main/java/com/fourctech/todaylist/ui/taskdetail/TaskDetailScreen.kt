@@ -1,5 +1,7 @@
 package com.fourctech.todaylist.ui.taskdetail
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import android.Manifest
+import android.os.Build
+import androidx.core.content.ContextCompat
+import android.content.pm.PackageManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fourctech.todaylist.domain.model.DeleteScope
@@ -62,6 +69,12 @@ fun TaskDetailScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) {
+        viewModel.onNotificationPermissionHandled()
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
@@ -70,6 +83,23 @@ fun TaskDetailScreen(
                 TaskDetailEvent.Deleted,
                 -> onBack()
             }
+        }
+    }
+
+    LaunchedEffect(state.needsNotificationPermission) {
+        if (!state.needsNotificationPermission) return@LaunchedEffect
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            viewModel.onNotificationPermissionHandled()
+            return@LaunchedEffect
+        }
+        val granted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            viewModel.onNotificationPermissionHandled()
+        } else {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
@@ -240,11 +270,6 @@ fun TaskDetailScreen(
                                     )
                                 }
                             }
-                            Text(
-                                text = "Notifications schedule in a later phase.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
                         }
                     }
 

@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,11 +44,22 @@ private data class BottomDestination(
 )
 
 @Composable
-fun TodayListApp() {
+fun TodayListApp(
+    deepLinkTaskId: String? = null,
+    onDeepLinkConsumed: () -> Unit = {},
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     var showQuickAdd by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(deepLinkTaskId) {
+        val taskId = deepLinkTaskId ?: return@LaunchedEffect
+        navController.navigate(Route.TaskDetail(taskId).path) {
+            launchSingleTop = true
+        }
+        onDeepLinkConsumed()
+    }
 
     val destinations = listOf(
         BottomDestination(Route.Today, "Today", Icons.Outlined.CheckCircle),

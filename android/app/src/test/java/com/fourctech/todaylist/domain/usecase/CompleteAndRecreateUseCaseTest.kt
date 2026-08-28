@@ -3,7 +3,7 @@ package com.fourctech.todaylist.domain.usecase
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.fourctech.todaylist.core.notifications.NoOpNotificationScheduler
+import com.fourctech.todaylist.core.notifications.FakeNotificationScheduler
 import com.fourctech.todaylist.core.time.FakeClockProvider
 import com.fourctech.todaylist.data.local.db.TodayListDatabase
 import com.fourctech.todaylist.data.repository.RoomHistoryRepository
@@ -27,6 +27,7 @@ class CompleteAndRecreateUseCaseTest {
     private lateinit var database: TodayListDatabase
     private lateinit var taskRepository: RoomTaskRepository
     private lateinit var historyRepository: RoomHistoryRepository
+    private lateinit var notifications: FakeNotificationScheduler
     private lateinit var completeTask: CompleteTaskUseCase
     private lateinit var undoComplete: UndoCompleteTaskUseCase
     private lateinit var recreate: RecreateTaskFromHistoryUseCase
@@ -48,7 +49,8 @@ class CompleteAndRecreateUseCaseTest {
             recurrenceEngine = DefaultRecurrenceEngine(),
         )
         historyRepository = RoomHistoryRepository(database.completionEventDao())
-        completeTask = CompleteTaskUseCase(taskRepository, NoOpNotificationScheduler())
+        notifications = FakeNotificationScheduler()
+        completeTask = CompleteTaskUseCase(taskRepository, notifications)
         undoComplete = UndoCompleteTaskUseCase(taskRepository)
         recreate = RecreateTaskFromHistoryUseCase(historyRepository, taskRepository)
     }
@@ -64,6 +66,7 @@ class CompleteAndRecreateUseCaseTest {
         val result = completeTask(created.id)!!
 
         assertThat(taskRepository.observeTodayTasks().first()).isEmpty()
+        assertThat(notifications.cancelled).contains(created.id)
         undoComplete(result.completionEventId, result.previousLocation)
 
         val today = taskRepository.observeTodayTasks().first()

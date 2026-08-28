@@ -1,5 +1,7 @@
 package com.fourctech.todaylist
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fourctech.todaylist.core.notifications.ReminderIntents
 import com.fourctech.todaylist.domain.model.ThemeMode
 import com.fourctech.todaylist.domain.repository.SettingsRepository
 import com.fourctech.todaylist.ui.navigation.TodayListApp
@@ -35,15 +38,18 @@ class MainActivity : ComponentActivity() {
     lateinit var settingsRepository: SettingsRepository
 
     private val rolloverViewModel: RolloverViewModel by viewModels()
+    private val deepLinkTaskIdState = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        deepLinkTaskIdState.value = taskIdFromIntent(intent)
         enableEdgeToEdge()
         setContent {
             val settings by settingsRepository.observeSettings()
                 .collectAsStateWithLifecycle(initialValue = null)
             val review by rolloverViewModel.review.collectAsStateWithLifecycle()
             var settingsReady by remember { mutableStateOf(false) }
+            val deepLinkTaskId by deepLinkTaskIdState
             val lifecycleOwner = LocalLifecycleOwner.current
 
             DisposableEffect(lifecycleOwner) {
@@ -67,7 +73,10 @@ class MainActivity : ComponentActivity() {
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        TodayListApp()
+                        TodayListApp(
+                            deepLinkTaskId = deepLinkTaskId,
+                            onDeepLinkConsumed = { deepLinkTaskIdState.value = null },
+                        )
                         review?.let { state ->
                             RolloverReviewDialog(
                                 state = state,
@@ -80,6 +89,24 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        deepLinkTaskIdState.value = taskIdFromIntent(intent)
+    }
+
+    companion object {
+        fun taskIdFromIntent(intent: Intent?): String? {
+            if (intent == null) return null
+            intent.getStringExtra(ReminderIntents.EXTRA_TASK_ID)?.let { return it }
+            val data: Uri = intent.data ?: return null
+            if (data.scheme != ReminderIntents.SCHEME || data.host != ReminderIntents.HOST_TASK) {
+                return null
+            }
+            return data.pathSegments.firstOrNull()?.takeIf { it.isNotBlank() }
         }
     }
 }

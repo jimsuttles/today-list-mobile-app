@@ -3,6 +3,7 @@ package com.fourctech.todaylist.ui.taskdetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.core.time.ClockProvider
 import com.fourctech.todaylist.domain.model.DeleteScope
 import com.fourctech.todaylist.domain.model.RepeatOption
@@ -10,6 +11,7 @@ import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.model.toRecurrenceRule
 import com.fourctech.todaylist.domain.model.toRepeatOption
+import com.fourctech.todaylist.domain.repository.SettingsRepository
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import com.fourctech.todaylist.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,12 +43,15 @@ data class TaskDetailUiState(
     val isRecurring: Boolean = false,
     val saving: Boolean = false,
     val showDeleteDialog: Boolean = false,
+    val needsNotificationPermission: Boolean = false,
 )
 
 @HiltViewModel
 class TaskDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val taskRepository: TaskRepository,
+    private val settingsRepository: SettingsRepository,
+    private val notificationScheduler: NotificationScheduler,
     private val clock: ClockProvider,
 ) : ViewModel() {
 
@@ -94,15 +99,35 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     fun onReminderEnabledChange(enabled: Boolean) {
-        if (enabled) {
-            val default = defaultReminderInstant()
-            _uiState.update {
-                it.copy(reminderEnabled = true, reminderAt = it.reminderAt ?: default)
+        viewModelScope.launch {
+            if (enabled) {
+                val settings = settingsRepository.getSettings()
+                val default = defaultReminderInstant()
+                _uiState.update {
+                    it.copy(
+                        reminderEnabled = true,
+                        reminderAt = it.reminderAt ?: default,
+                        needsNotificationPermission = !settings.notificationPermissionPrompted,
+                    )
+                }
+                if (!settings.notificationPermissionPrompted) {
+                    settingsRepository.setNotificationPermissionPrompted(true)
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        reminderEnabled = false,
+                        reminderAt = null,
+                        needsNotificationPermission = false,
+                    )
+                }
             }
-        } else {
-            _uiState.update { it.copy(reminderEnabled = false, reminderAt = null) }
+            scheduleAutoSave(immediate = true)
         }
-        scheduleAutoSave(immediate = true)
+    }
+
+    fun onNotificationPermissionHandled() {
+        _uiState.update { it.copy(needsNotificationPermission = false) }
     }
 
     fun onReminderDateSelected(date: LocalDate) {
@@ -135,6 +160,7 @@ class TaskDetailViewModel @Inject constructor(
         viewModelScope.launch {
             saveJob?.cancel()
             flushSave()
+            notificationScheduler.cancelReminder(taskId)
             taskRepository.deleteTask(taskId, scope)
             _events.emit(TaskDetailEvent.Deleted)
         }
@@ -185,10 +211,23 @@ class TaskDetailViewModel @Inject constructor(
 
         _uiState.update { it.copy(saving = true) }
         taskRepository.updateTask(draft)
+        syncReminderAlarm(draft)
         baseline = taskRepository.getTask(taskId) ?: draft
         _uiState.update { state ->
-            baseline?.toUiState()?.copy(saving = false, showDeleteDialog = state.showDeleteDialog)
-                ?: state.copy(saving = false)
+            baseline?.toUiState()?.copy(
+                saving = false,
+                showDeleteDialog = state.showDeleteDialog,
+                needsNotificationPermission = state.needsNotificationPermission,
+            ) ?: state.copy(saving = false)
+        }
+    }
+
+    private suspend fun syncReminderAlarm(task: Task) {
+        val at = task.reminderAt
+        if (at == null) {
+            notificationScheduler.cancelReminder(task.id)
+        } else {
+            notificationScheduler.scheduleReminder(task.id, task.title, at)
         }
     }
 

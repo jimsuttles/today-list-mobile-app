@@ -1,16 +1,9 @@
 package com.fourctech.todaylist.core.notifications
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import java.time.Instant
 
-/**
- * Phase 7 will schedule reminders. Phase 3 only cancels on complete.
- */
 interface NotificationScheduler {
-    suspend fun cancelReminder(taskId: String)
-}
+    suspend fun scheduleReminder(taskId: String, title: String, at: Instant)
 
-@Singleton
-class NoOpNotificationScheduler @Inject constructor() : NotificationScheduler {
-    override suspend fun cancelReminder(taskId: String) = Unit
+    suspend fun cancelReminder(taskId: String)
 }

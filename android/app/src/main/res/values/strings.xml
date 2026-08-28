@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Today List</string>
     <string name="publisher_name">4CTech, LLC</string>
+    <string name="reminder_notification_title">Task reminder</string>
+    <string name="reminder_fallback_title">Today List task</string>
 </resources>
