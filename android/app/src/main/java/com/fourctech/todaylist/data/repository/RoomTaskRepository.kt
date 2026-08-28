@@ -315,6 +315,17 @@ class RoomTaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun getAllTaskIds(): List<String> = taskDao.getAllIds()
+
+    override suspend fun deleteAllUserContent() {
+        database.withTransaction {
+            completionEventDao.deleteAll()
+            occurrenceDao.deleteAll()
+            taskDao.deleteAll()
+            recurrenceDao.deleteAll()
+        }
+    }
+
     private suspend fun TaskEntity.toDomainTask(): Task? {
         val rule = recurrenceId?.let { recurrenceDao.getById(it)?.toDomain() }
         return toDomain(rule)

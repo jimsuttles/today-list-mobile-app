@@ -63,7 +63,10 @@ class MainActivity : ComponentActivity() {
                 onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
             }
 
-            TodayListTheme(themeMode = settings?.themeMode ?: ThemeMode.SYSTEM) {
+            TodayListTheme(
+                themeMode = settings?.themeMode ?: ThemeMode.SYSTEM,
+                hapticsEnabled = settings?.hapticsEnabled ?: true,
+            ) {
                 if (!settingsReady || settings == null) {
                     Box(
                         modifier = Modifier.fillMaxSize(),

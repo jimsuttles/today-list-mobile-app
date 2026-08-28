@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Today List</string>
     <string name="publisher_name">4CTech, LLC</string>
+    <string name="privacy_policy_url">https://www.4ctech.io/today-list/privacy/</string>
+    <string name="terms_url">https://www.4ctech.io/today-list/terms/</string>
+    <string name="feedback_email">jim@4ctech.io</string>
     <string name="reminder_notification_title">Task reminder</string>
     <string name="reminder_fallback_title">Today List task</string>
 </resources>

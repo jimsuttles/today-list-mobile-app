@@ -60,6 +60,19 @@ class DataStoreSettingsRepository @Inject constructor(
     override suspend fun setNotificationPermissionPrompted(prompted: Boolean) {
         dataStore.edit { it[SettingsKeys.notificationPermissionPrompted] = prompted }
     }
+
+    override suspend fun resetPreferencesKeepingEntitlement() {
+        dataStore.edit { prefs ->
+            val entitled = prefs[SettingsKeys.adsRemovedCached] ?: false
+            prefs.clear()
+            prefs[SettingsKeys.adsRemovedCached] = entitled
+            prefs[SettingsKeys.themeMode] = ThemeMode.SYSTEM.name
+            prefs[SettingsKeys.rolloverMode] = RolloverMode.ASK.name
+            prefs[SettingsKeys.weekStart] = WeekStart.SUNDAY.name
+            prefs[SettingsKeys.hapticsEnabled] = true
+            prefs[SettingsKeys.notificationPermissionPrompted] = false
+        }
+    }
 }
 
 private fun Preferences.toAppSettings(): AppSettings =

@@ -10,4 +10,7 @@ interface HistoryRepository {
     fun observeHistoryByDate(date: LocalDate): Flow<List<CompletionRecord>>
 
     suspend fun getCompletion(id: String): CompletionRecord?
+
+    /** Permanently removes all completion history. */
+    suspend fun clearHistory()
 }

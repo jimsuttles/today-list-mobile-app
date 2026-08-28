@@ -226,4 +226,19 @@ class RoomTaskRepositoryTest {
         val today = repository.observeTodayTasks().first()
         assertThat(today.map { it.title }).containsExactly("C", "A", "B").inOrder()
     }
+
+    @Test
+    fun deleteAllUserContent_clearsTasksAndHistory() = runTest {
+        val created = repository.createTask(title = "Wipe me", location = TaskLocation.TODAY)
+        repository.completeTask(created.id)
+        repository.createTask(title = "Still open", location = TaskLocation.LATER)
+
+        assertThat(repository.getAllTaskIds()).isNotEmpty()
+        repository.deleteAllUserContent()
+
+        assertThat(repository.getAllTaskIds()).isEmpty()
+        assertThat(repository.observeTodayTasks().first()).isEmpty()
+        assertThat(repository.observeLaterTasks().first()).isEmpty()
+        assertThat(database.completionEventDao().observeAll().first()).isEmpty()
+    }
 }

@@ -25,4 +25,7 @@ interface SettingsRepository {
     suspend fun setLastRolloverDate(date: LocalDate?)
 
     suspend fun setNotificationPermissionPrompted(prompted: Boolean)
+
+    /** Clears prefs but keeps [AppSettings.adsRemovedCached]. */
+    suspend fun resetPreferencesKeepingEntitlement()
 }

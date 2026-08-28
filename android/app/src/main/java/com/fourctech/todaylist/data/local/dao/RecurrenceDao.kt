@@ -20,4 +20,7 @@ interface RecurrenceDao {
 
     @Query("DELETE FROM recurrence_rules WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("DELETE FROM recurrence_rules")
+    suspend fun deleteAll()
 }

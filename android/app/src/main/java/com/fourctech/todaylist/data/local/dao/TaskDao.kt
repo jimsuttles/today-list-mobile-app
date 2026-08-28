@@ -62,4 +62,10 @@ interface TaskDao {
 
     @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM tasks WHERE status = :status")
     suspend fun maxSortOrder(status: TaskStatus): Int
+
+    @Query("SELECT id FROM tasks")
+    suspend fun getAllIds(): List<String>
+
+    @Query("DELETE FROM tasks")
+    suspend fun deleteAll()
 }

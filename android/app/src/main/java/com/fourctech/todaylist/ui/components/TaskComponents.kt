@@ -25,12 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.ui.theme.LocalHapticsEnabled
 
 @Composable
 fun TaskRow(
@@ -43,6 +45,8 @@ fun TaskRow(
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    val view = LocalView.current
+    val hapticsEnabled = LocalHapticsEnabled.current
     val moveLabel = when (task.location) {
         TaskLocation.TODAY -> "Move to Later"
         TaskLocation.LATER -> "Move to Today"
@@ -56,7 +60,12 @@ fun TaskRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
-            onClick = onComplete,
+            onClick = {
+                if (hapticsEnabled) {
+                    view.performHapticFeedback(android.view.HapticFeedbackConstants.CONFIRM)
+                }
+                onComplete()
+            },
             modifier = Modifier.semantics { contentDescription = "Complete ${task.title}" },
         ) {
             Icon(

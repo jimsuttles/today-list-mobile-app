@@ -62,4 +62,26 @@ class DataStoreSettingsRepositoryTest {
         assertThat(settings.lastRolloverDate).isEqualTo(LocalDate.of(2026, 8, 27))
         assertThat(settings.notificationPermissionPrompted).isTrue()
     }
+
+    @Test
+    fun resetPreferencesKeepingEntitlement_clearsButKeepsAdsFlag() = runTest {
+        repository.setThemeMode(ThemeMode.DARK)
+        repository.setRolloverMode(RolloverMode.AUTO_TODAY)
+        repository.setWeekStart(WeekStart.MONDAY)
+        repository.setHapticsEnabled(false)
+        repository.setAdsRemovedCached(true)
+        repository.setLastRolloverDate(LocalDate.of(2026, 8, 27))
+        repository.setNotificationPermissionPrompted(true)
+
+        repository.resetPreferencesKeepingEntitlement()
+
+        val settings = repository.getSettings()
+        assertThat(settings.themeMode).isEqualTo(ThemeMode.SYSTEM)
+        assertThat(settings.rolloverMode).isEqualTo(RolloverMode.ASK)
+        assertThat(settings.weekStart).isEqualTo(WeekStart.SUNDAY)
+        assertThat(settings.hapticsEnabled).isTrue()
+        assertThat(settings.adsRemovedCached).isTrue()
+        assertThat(settings.lastRolloverDate).isNull()
+        assertThat(settings.notificationPermissionPrompted).isFalse()
+    }
 }

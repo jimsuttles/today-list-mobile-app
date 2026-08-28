@@ -23,6 +23,10 @@ class RoomHistoryRepository @Inject constructor(
 
     override suspend fun getCompletion(id: String): CompletionRecord? =
         completionEventDao.getById(id)?.toDomain()
+
+    override suspend fun clearHistory() {
+        completionEventDao.deleteAll()
+    }
 }
 
 private fun CompletionEventEntity.toDomain(): CompletionRecord =

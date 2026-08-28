@@ -35,4 +35,7 @@ interface CompletionEventDao {
 
     @Query("DELETE FROM completion_events WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("DELETE FROM completion_events")
+    suspend fun deleteAll()
 }

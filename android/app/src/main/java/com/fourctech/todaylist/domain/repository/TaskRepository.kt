@@ -48,4 +48,10 @@ interface TaskRepository {
 
     /** Reorders tasks within [location]; [orderedTaskIds] is front-to-back. */
     suspend fun reorderTasks(location: TaskLocation, orderedTaskIds: List<String>)
+
+    /** IDs of all active tasks (for cancelling reminders before a wipe). */
+    suspend fun getAllTaskIds(): List<String>
+
+    /** Permanently removes all tasks, recurrence, occurrences, and completion history. */
+    suspend fun deleteAllUserContent()
 }
