@@ -49,19 +49,31 @@ Upload in this order when assets are ready:
 7. Home screen widget (optional)
 
 ## Release artifact
-Build a signed AAB when keystore env is configured:
+Signed AAB ready for internal testing:
+
+- `store/play/today-list-1.0.0.aab` (versionCode **1** / versionName **1.0.0**)
+- Upload key SHA-256: `06:90:52:7E:08:77:9E:2A:A5:12:EC:8C:36:EF:DB:E9:F1:99:04:71:7B:6D:70:FC:86:90:E2:48:0F:35:E1:21`
+
+Rebuild:
 
 ```bash
 cd android
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+./scripts/create-upload-keystore.sh   # once
 ./gradlew :app:bundleRelease
+cp app/build/outputs/bundle/release/app-release.aab ../store/play/today-list-1.0.0.aab
 ```
 
-Signing keys (local.properties or env):
+Signing keys (local.properties — do not commit):
 - `TL_SIGN_STORE_FILE`
 - `TL_SIGN_KEY_ALIAS`
 - `TL_SIGN_STORE_PASSWORD`
 - `TL_SIGN_KEY_PASSWORD`
+
+## Listing graphics
+- Icon: `store/play/icon-512.png`
+- Feature graphic: `store/play/feature-graphic.png`
+- Screenshots: `store/play/screenshots/01-today.png` … `06-settings.png`
 
 Production AdMob (optional until live units exist):
 - `ADMOB_APP_ID`

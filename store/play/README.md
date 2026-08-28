@@ -1,52 +1,48 @@
 # Play assets — Today List
 
-## Legal pages (publish before Play submission)
-Copy markdown from `store/legal/` to the live site:
+## Listing assets (ready)
+| Asset | Path | Size |
+|-------|------|------|
+| App icon | `store/play/icon-512.png` | 512×512 |
+| Feature graphic | `store/play/feature-graphic.png` | 1024×500 |
+| Phone screenshots | `store/play/screenshots/*.png` | 1080×2400 |
+| Signed AAB | `store/play/today-list-1.0.0.aab` | versionCode 1 / 1.0.0 |
 
+Upload screenshots in this order:
+1. `01-today.png`
+2. `02-later.png`
+3. `03-task-detail.png`
+4. `05-history.png`
+5. `06-settings.png`
+
+## Legal pages (live)
 - Privacy → https://www.4ctech.io/today-list/privacy/
 - Terms → https://www.4ctech.io/today-list/terms/
+- Product → https://www.4ctech.io/today-list/
 
-## Screenshots
-Phone shots (~1080×2400) live in `store/play/screenshots/`.
-
+## Signing (local only — do not commit)
 ```bash
-# Emulator or device connected
+cd android
+./scripts/create-upload-keystore.sh   # once
+# Writes TL_SIGN_* into local.properties; keystore under android/keystore/
+./gradlew :app:bundleRelease
+cp app/build/outputs/bundle/release/app-release.aab ../store/play/today-list-1.0.0.aab
+```
+
+**Back up** `android/keystore/today-list-upload.jks` and the `TL_SIGN_*` passwords from `local.properties`. Losing them blocks updates.
+
+Upload key SHA-256 (for Play App signing enrollment / comparison):
+`06:90:52:7E:08:77:9E:2A:A5:12:EC:8C:36:EF:DB:E9:F1:99:04:71:7B:6D:70:FC:86:90:E2:48:0F:35:E1:21`
+
+## Screenshots regenerate
+```bash
 python3 store/play/screenshots/capture_play_shots.py
 ```
 
-Expected captures:
-1. `01-today.png` — Today with progress
-2. `02-later.png` — Later list
-3. `03-task-detail.png` — Task detail
-4. `05-history.png` — History
-5. `06-settings.png` — Settings
-
-Manual (script skips these):
-- Rollover review (change device date / leave unfinished overnight)
-- Home screen widget
-- Feature graphic 1024×500
-
-## Icon / branding
-Adaptive icon uses navy background + white checklist bars. Replace
-`drawable/ic_launcher_foreground.xml` before production if you want a final mark.
-
-## Signing + AAB
-```bash
-cd android
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-export TL_SIGN_STORE_FILE=...
-export TL_SIGN_KEY_ALIAS=...
-export TL_SIGN_STORE_PASSWORD=...
-export TL_SIGN_KEY_PASSWORD=...
-# optional production ads:
-export ADMOB_APP_ID=...
-export ADMOB_BANNER_UNIT_ID=...
-./gradlew :app:bundleRelease
-```
-
-## Still needs your action
-1. Publish privacy + terms URLs
-2. Create/upload Play listing assets (icon 512, feature graphic, screenshots)
-3. Configure release keystore env vars
-4. Create Play Console app + internal testing track
-5. Swap test AdMob IDs for production when ready
+## Still needs Console action
+1. Create app `com.fourctech.todaylist` in Play Console (if not already)
+2. Main store listing — paste from `listing.md`; upload icon, feature graphic, screenshots
+3. Privacy policy URL + Data safety + content rating + ads declaration
+4. Internal testing → upload `today-list-1.0.0.aab` → add testers
+5. Production AdMob IDs when ready (`ADMOB_APP_ID`, `ADMOB_BANNER_UNIT_ID`)
+6. Optional: `google-services.json` for Firebase Analytics/Crashlytics

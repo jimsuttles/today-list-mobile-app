@@ -15,6 +15,7 @@ captures/
 *.jks
 *.keystore
 !debug.keystore
+android/keystore/
 google-services.json
 admob.properties
 Secrets.xcconfig
