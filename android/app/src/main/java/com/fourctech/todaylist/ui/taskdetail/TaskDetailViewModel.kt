@@ -215,8 +215,11 @@ class TaskDetailViewModel @Inject constructor(
 
         _uiState.update { it.copy(saving = true) }
         taskRepository.updateTask(draft)
-        syncReminderAlarm(draft)
+        val scheduledFor = syncReminderAlarm(draft)
         baseline = taskRepository.getTask(taskId) ?: draft
+        if (scheduledFor != null && draft.reminderAt != null) {
+            _events.emit(TaskDetailEvent.ReminderScheduled(scheduledFor))
+        }
         _uiState.update { state ->
             baseline?.toUiState()?.copy(
                 saving = false,
@@ -226,13 +229,26 @@ class TaskDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun syncReminderAlarm(task: Task) {
-        val at = task.reminderAt
-        if (at == null) {
+    private suspend fun syncReminderAlarm(task: Task): Instant? {
+        val requested = task.reminderAt
+        if (requested == null) {
             notificationScheduler.cancelReminder(task.id)
-        } else {
-            notificationScheduler.scheduleReminder(task.id, task.title, at)
+            return null
         }
+        val minStart = clock.now().plusSeconds(60)
+        val effective = if (requested.isBefore(minStart)) minStart else requested
+        if (effective != requested) {
+            val adjusted = task.copy(reminderAt = effective)
+            taskRepository.updateTask(adjusted)
+            _uiState.update {
+                it.copy(reminderEnabled = true, reminderAt = effective)
+            }
+            baseline = adjusted
+            notificationScheduler.scheduleReminder(task.id, task.title, effective)
+            return effective
+        }
+        notificationScheduler.scheduleReminder(task.id, task.title, effective)
+        return effective
     }
 
     private fun defaultReminderInstant(): Instant {
@@ -258,4 +274,5 @@ sealed class TaskDetailEvent {
     data object NavigateBack : TaskDetailEvent()
     data object Deleted : TaskDetailEvent()
     data object NotificationPermissionDenied : TaskDetailEvent()
+    data class ReminderScheduled(val at: Instant) : TaskDetailEvent()
 }

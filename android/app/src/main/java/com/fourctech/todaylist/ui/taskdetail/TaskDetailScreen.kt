@@ -90,6 +90,12 @@ fun TaskDetailScreen(
                         "Notifications are off — enable them in system settings to get reminders.",
                     )
                 }
+                is TaskDetailEvent.ReminderScheduled -> {
+                    val label = event.at.atZone(ZoneId.systemDefault())
+                        .toLocalTime()
+                        .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+                    snackbarHostState.showSnackbar("Reminder set for $label")
+                }
             }
         }
     }

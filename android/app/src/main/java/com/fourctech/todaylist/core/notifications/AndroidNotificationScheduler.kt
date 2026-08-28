@@ -14,6 +14,13 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class ScheduleReminderResult {
+    Scheduled,
+    Cancelled,
+    SkippedPast,
+    Failed,
+}
+
 @Singleton
 class AndroidNotificationScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -21,16 +28,21 @@ class AndroidNotificationScheduler @Inject constructor(
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    override suspend fun scheduleReminder(taskId: String, title: String, at: Instant) {
+    override suspend fun scheduleReminder(taskId: String, title: String, at: Instant): ScheduleReminderResult {
         cancelReminder(taskId)
-        val triggerAt = at.toEpochMilli()
-        if (triggerAt <= System.currentTimeMillis()) return
+        val now = System.currentTimeMillis()
+        var triggerAt = at.toEpochMilli()
+        if (triggerAt <= now) {
+            // Never silently drop — bump at least 60s ahead so the user still gets a fire.
+            triggerAt = now + 60_000L
+            Log.w(TAG, "Reminder was in the past; bumping to +60s for $taskId")
+        }
 
         ReminderNotifications.ensureChannel(context)
-        val manager = alarmManager ?: return
+        val manager = alarmManager ?: return ScheduleReminderResult.Failed
         val fireIntent = broadcastPendingIntent(taskId, title)
 
-        try {
+        return try {
             if (canUseExactAlarms(manager)) {
                 val showIntent = PendingIntent.getActivity(
                     context,
@@ -48,6 +60,8 @@ class AndroidNotificationScheduler @Inject constructor(
             } else {
                 manager.set(AlarmManager.RTC_WAKEUP, triggerAt, fireIntent)
             }
+            Log.i(TAG, "Scheduled reminder for $taskId at $triggerAt")
+            ScheduleReminderResult.Scheduled
         } catch (e: SecurityException) {
             Log.w(TAG, "Exact alarm denied; falling back to inexact", e)
             try {
@@ -56,8 +70,10 @@ class AndroidNotificationScheduler @Inject constructor(
                 } else {
                     manager.set(AlarmManager.RTC_WAKEUP, triggerAt, fireIntent)
                 }
+                ScheduleReminderResult.Scheduled
             } catch (fallback: Exception) {
                 Log.e(TAG, "Failed to schedule reminder for $taskId", fallback)
+                ScheduleReminderResult.Failed
             }
         }
     }
