@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fourctech.todaylist.domain.model.DeleteScope
 import com.fourctech.todaylist.domain.model.RepeatOption
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.ui.theme.todayListFilterChipColors
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -247,11 +248,13 @@ fun TaskDetailScreen(
                             selected = state.location == TaskLocation.TODAY,
                             onClick = { viewModel.onLocationChange(TaskLocation.TODAY) },
                             label = { Text("Today") },
+                            colors = todayListFilterChipColors(),
                         )
                         FilterChip(
                             selected = state.location == TaskLocation.LATER,
                             onClick = { viewModel.onLocationChange(TaskLocation.LATER) },
                             label = { Text("Later") },
+                            colors = todayListFilterChipColors(),
                         )
                     }
 
@@ -297,6 +300,7 @@ fun TaskDetailScreen(
                                         selected = state.repeat == option,
                                         onClick = { viewModel.onRepeatChange(option) },
                                         label = { Text(option.label()) },
+                                        colors = todayListFilterChipColors(),
                                     )
                                 }
                             }

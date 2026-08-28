@@ -26,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.ui.theme.todayListFilterChipColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,11 +124,13 @@ private fun RolloverTaskRow(
                 selected = decision == TaskLocation.TODAY,
                 onClick = { onDecision(TaskLocation.TODAY) },
                 label = { Text("Today") },
+                colors = todayListFilterChipColors(),
             )
             FilterChip(
                 selected = decision == TaskLocation.LATER,
                 onClick = { onDecision(TaskLocation.LATER) },
                 label = { Text("Later") },
+                colors = todayListFilterChipColors(),
             )
         }
     }

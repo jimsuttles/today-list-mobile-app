@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TodayList" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.TodayList" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#1B4F72</item>
+        <item name="android:navigationBarColor">#EEF4F8</item>
+        <item name="android:windowBackground">#EEF4F8</item>
+        <item name="android:colorPrimary">#1B4F72</item>
+        <item name="android:colorAccent">#D97757</item>
+    </style>
 </resources>

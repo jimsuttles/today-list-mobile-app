@@ -185,9 +185,9 @@ private fun openAppAction() = actionStartActivity(
 )
 
 private object WidgetColors {
-    val background = ColorProvider(day = Color(0xFFF4F7FA), night = Color(0xFF1A2128))
+    val background = ColorProvider(day = Color(0xFFEEF4F8), night = Color(0xFF0E1419))
     val onBackground = ColorProvider(day = Color(0xFF1A1F24), night = Color(0xFFE8EEF3))
-    val primary = ColorProvider(day = Color(0xFF1B4F72), night = Color(0xFF5DADE2))
+    val primary = ColorProvider(day = Color(0xFF1B4F72), night = Color(0xFF7EC4E8))
 }
 
 private val MEDIUM_BREAKPOINT = 180.dp

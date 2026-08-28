@@ -7,45 +7,54 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import com.fourctech.todaylist.domain.model.ThemeMode
 
-private val Navy = Color(0xFF1B4F72)
-private val Slate = Color(0xFF2C3E50)
-private val SoftBlue = Color(0xFF5DADE2)
-private val Mist = Color(0xFFF4F7FA)
-private val Ink = Color(0xFF1A1F24)
-
 private val LightColors = lightColorScheme(
-    primary = Navy,
-    onPrimary = Color.White,
-    secondary = SoftBlue,
-    onSecondary = Ink,
-    background = Mist,
-    onBackground = Ink,
-    surface = Color.White,
-    onSurface = Ink,
-    surfaceVariant = Color(0xFFE8EEF3),
-    onSurfaceVariant = Slate,
-    outline = Color(0xFF6B7C8A),
-    error = Color(0xFFB3261E),
-    onError = Color.White,
+    primary = NavyPrimary,
+    onPrimary = NavyOnPrimary,
+    primaryContainer = NavyPrimaryContainer,
+    onPrimaryContainer = NavyOnPrimaryContainer,
+    secondary = CoralSecondary,
+    onSecondary = CoralOnSecondary,
+    secondaryContainer = CoralSecondaryContainer,
+    onSecondaryContainer = CoralOnSecondaryContainer,
+    tertiary = SkyTertiary,
+    onTertiary = SkyOnTertiary,
+    tertiaryContainer = SkyTertiaryContainer,
+    onTertiaryContainer = SkyOnTertiaryContainer,
+    background = LightBackground,
+    onBackground = LightOnBackground,
+    surface = LightSurface,
+    onSurface = LightOnSurface,
+    surfaceVariant = LightSurfaceVariant,
+    onSurfaceVariant = LightOnSurface.copy(alpha = 0.75f),
+    outline = LightOutline,
+    error = ErrorRed,
+    onError = NavyOnPrimary,
 )
 
 private val DarkColors = darkColorScheme(
-    primary = SoftBlue,
-    onPrimary = Ink,
-    secondary = SoftBlue,
-    onSecondary = Ink,
-    background = Color(0xFF12161A),
-    onBackground = Color(0xFFE8EEF3),
-    surface = Color(0xFF1A2128),
-    onSurface = Color(0xFFE8EEF3),
-    surfaceVariant = Color(0xFF24303A),
-    onSurfaceVariant = Color(0xFFB8C4CE),
-    outline = Color(0xFF8A9AAB),
-    error = Color(0xFFF2B8B5),
-    onError = Color(0xFF601410),
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    primaryContainer = DarkPrimaryContainer,
+    onPrimaryContainer = DarkOnPrimaryContainer,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    secondaryContainer = DarkSecondaryContainer,
+    onSecondaryContainer = DarkOnSecondaryContainer,
+    tertiary = DarkTertiary,
+    onTertiary = DarkOnTertiary,
+    tertiaryContainer = DarkTertiaryContainer,
+    onTertiaryContainer = DarkOnTertiaryContainer,
+    background = DarkBackground,
+    onBackground = DarkOnBackground,
+    surface = DarkSurface,
+    onSurface = DarkOnSurface,
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = DarkOnSurface.copy(alpha = 0.75f),
+    outline = DarkOutline,
+    error = DarkError,
+    onError = DarkOnError,
 )
 
 val LocalHapticsEnabled = staticCompositionLocalOf { true }
@@ -64,6 +73,7 @@ fun TodayListTheme(
     CompositionLocalProvider(LocalHapticsEnabled provides hapticsEnabled) {
         MaterialTheme(
             colorScheme = if (dark) DarkColors else LightColors,
+            typography = Typography,
             content = content,
         )
     }

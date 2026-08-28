@@ -9,8 +9,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,7 +82,10 @@ fun TodayListApp(
     Scaffold(
         bottomBar = {
             if (onBottomBar) {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ) {
                     destinations.forEach { dest ->
                         NavigationBarItem(
                             selected = currentRoute == dest.route.path,
@@ -95,6 +100,13 @@ fun TodayListApp(
                             },
                             icon = { Icon(dest.icon, contentDescription = dest.label) },
                             label = { Text(dest.label) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
                         )
                     }
                 }
@@ -102,7 +114,11 @@ fun TodayListApp(
         },
         floatingActionButton = {
             if (showFab) {
-                FloatingActionButton(onClick = { showQuickAdd = true }) {
+                FloatingActionButton(
+                    onClick = { showQuickAdd = true },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = "Quick add")
                 }
             }

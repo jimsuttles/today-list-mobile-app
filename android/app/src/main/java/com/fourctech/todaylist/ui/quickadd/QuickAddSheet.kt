@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.ui.theme.todayListFilterChipColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +66,7 @@ fun QuickAddSheet(
                     selected = state.location == TaskLocation.TODAY,
                     onClick = { viewModel.onLocationChange(TaskLocation.TODAY) },
                     label = { Text("Today") },
+                    colors = todayListFilterChipColors(),
                     modifier = Modifier.semantics {
                         contentDescription = if (state.location == TaskLocation.TODAY) {
                             "List Today, selected"
@@ -77,6 +79,7 @@ fun QuickAddSheet(
                     selected = state.location == TaskLocation.LATER,
                     onClick = { viewModel.onLocationChange(TaskLocation.LATER) },
                     label = { Text("Later") },
+                    colors = todayListFilterChipColors(),
                     modifier = Modifier.semantics {
                         contentDescription = if (state.location == TaskLocation.LATER) {
                             "List Later, selected"
