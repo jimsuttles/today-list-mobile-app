@@ -1,5 +1,6 @@
 package com.fourctech.todaylist.domain.repository
 
+import com.fourctech.todaylist.domain.model.DeleteScope
 import com.fourctech.todaylist.domain.model.RecurrenceRule
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
@@ -37,7 +38,10 @@ interface TaskRepository {
         restoreTo: TaskLocation = TaskLocation.TODAY,
     )
 
-    suspend fun deleteTask(taskId: String)
+    suspend fun deleteTask(
+        taskId: String,
+        scope: DeleteScope = DeleteScope.THIS_TASK,
+    )
 
     /** Keeps tasks on Today and refreshes [scheduledDate] for the new day. */
     suspend fun keepOnTodayForNewDay(taskIds: List<String>)

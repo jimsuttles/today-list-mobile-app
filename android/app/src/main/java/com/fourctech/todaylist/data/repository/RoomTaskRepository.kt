@@ -11,6 +11,7 @@ import com.fourctech.todaylist.data.local.entity.CompletionEventEntity
 import com.fourctech.todaylist.data.local.entity.TaskEntity
 import com.fourctech.todaylist.data.local.entity.TaskOccurrenceEntity
 import com.fourctech.todaylist.data.local.entity.TaskStatus
+import com.fourctech.todaylist.domain.model.DeleteScope
 import com.fourctech.todaylist.domain.model.RecurrenceRule
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
@@ -95,19 +96,29 @@ class RoomTaskRepository @Inject constructor(
     override suspend fun updateTask(task: Task) {
         database.withTransaction {
             val existing = taskDao.getTaskById(task.id) ?: return@withTransaction
-            val updated = task.copy(updatedAt = clock.now())
+            val now = clock.now()
+            val newStatus = task.location.toStatus()
+            val sortOrder = if (existing.status != newStatus) {
+                taskDao.maxSortOrder(newStatus) + 1
+            } else {
+                task.sortOrder
+            }
+            val scheduledDate = when (task.location) {
+                TaskLocation.TODAY -> task.scheduledDate ?: clock.today()
+                TaskLocation.LATER -> task.scheduledDate
+            }
+            val updated = task.copy(
+                sortOrder = sortOrder,
+                scheduledDate = scheduledDate,
+                updatedAt = now,
+            )
             val rule = updated.recurrence
             if (rule != null) {
                 recurrenceDao.insert(rule.toEntity())
             } else if (existing.recurrenceId != null) {
                 recurrenceDao.delete(existing.recurrenceId)
             }
-            val status = if (existing.status == TaskStatus.DELETED) {
-                updated.location.toStatus()
-            } else {
-                existing.status
-            }
-            taskDao.updateTask(updated.toEntity(status))
+            taskDao.updateTask(updated.toEntity(newStatus))
         }
     }
 
@@ -230,12 +241,15 @@ class RoomTaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun deleteTask(taskId: String) {
+    override suspend fun deleteTask(
+        taskId: String,
+        scope: DeleteScope,
+    ) {
         database.withTransaction {
             val task = taskDao.getTaskById(taskId) ?: return@withTransaction
             val recurrenceId = task.recurrenceId
             taskDao.deleteTask(taskId)
-            if (recurrenceId != null) {
+            if (recurrenceId != null && scope == DeleteScope.ENTIRE_SERIES) {
                 recurrenceDao.delete(recurrenceId)
             }
         }

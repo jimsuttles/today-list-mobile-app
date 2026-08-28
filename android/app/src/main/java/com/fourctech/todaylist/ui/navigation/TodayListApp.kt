@@ -2,9 +2,9 @@ package com.fourctech.todaylist.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +33,7 @@ import com.fourctech.todaylist.ui.history.HistoryScreen
 import com.fourctech.todaylist.ui.later.LaterScreen
 import com.fourctech.todaylist.ui.quickadd.QuickAddSheet
 import com.fourctech.todaylist.ui.settings.SettingsScreen
+import com.fourctech.todaylist.ui.taskdetail.TaskDetailScreen
 import com.fourctech.todaylist.ui.today.TodayScreen
 
 private data class BottomDestination(
@@ -51,7 +52,7 @@ fun TodayListApp() {
     val destinations = listOf(
         BottomDestination(Route.Today, "Today", Icons.Outlined.CheckCircle),
         BottomDestination(Route.Later, "Later", Icons.Filled.DateRange),
-        BottomDestination(Route.History, "History", Icons.Filled.List),
+        BottomDestination(Route.History, "History", Icons.AutoMirrored.Filled.List),
         BottomDestination(Route.Settings, "Settings", Icons.Filled.Settings),
     )
 
@@ -100,10 +101,14 @@ fun TodayListApp() {
             modifier = Modifier.padding(padding),
         ) {
             composable(Route.Today.path) {
-                TodayScreen(onOpenTask = { /* Phase 5 detail */ })
+                TodayScreen(
+                    onOpenTask = { id -> navController.navigate(Route.TaskDetail(id).path) },
+                )
             }
             composable(Route.Later.path) {
-                LaterScreen(onOpenTask = { /* Phase 5 detail */ })
+                LaterScreen(
+                    onOpenTask = { id -> navController.navigate(Route.TaskDetail(id).path) },
+                )
             }
             composable(Route.History.path) {
                 HistoryScreen(
@@ -117,6 +122,12 @@ fun TodayListApp() {
                 arguments = listOf(navArgument(Route.HistoryDetail.arg) { type = NavType.StringType }),
             ) {
                 HistoryDetailScreen(onBack = { navController.popBackStack() })
+            }
+            composable(
+                route = Route.TaskDetail.pattern,
+                arguments = listOf(navArgument(Route.TaskDetail.arg) { type = NavType.StringType }),
+            ) {
+                TaskDetailScreen(onBack = { navController.popBackStack() })
             }
             composable(Route.Settings.path) {
                 SettingsScreen()

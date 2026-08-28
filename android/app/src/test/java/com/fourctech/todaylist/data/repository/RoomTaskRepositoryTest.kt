@@ -100,6 +100,70 @@ class RoomTaskRepositoryTest {
     }
 
     @Test
+    fun updateTask_movesLocationAndSavesNotes() = runTest {
+        val created = repository.createTask(title = "Draft", location = TaskLocation.TODAY)
+
+        repository.updateTask(
+            created.copy(
+                title = "Ready",
+                notes = "Details",
+                location = TaskLocation.LATER,
+            ),
+        )
+
+        assertThat(repository.observeTodayTasks().first()).isEmpty()
+        val later = repository.observeLaterTasks().first()
+        assertThat(later).hasSize(1)
+        assertThat(later.first().title).isEqualTo("Ready")
+        assertThat(later.first().notes).isEqualTo("Details")
+        assertThat(later.first().location).isEqualTo(TaskLocation.LATER)
+    }
+
+    @Test
+    fun deleteTask_thisTask_leavesRecurrenceRowWhenSeriesKept() = runTest {
+        val created = repository.createTask(
+            title = "Repeat me",
+            location = TaskLocation.TODAY,
+            recurrence = com.fourctech.todaylist.domain.model.RecurrenceRule(
+                id = "rule-1",
+                type = com.fourctech.todaylist.domain.model.RecurrenceType.DAILY,
+                interval = 1,
+                startDate = clock.today(),
+                endDate = null,
+                weekdays = emptySet(),
+                dayOfMonth = null,
+            ),
+        )
+
+        repository.deleteTask(created.id, com.fourctech.todaylist.domain.model.DeleteScope.THIS_TASK)
+
+        assertThat(repository.getTask(created.id)).isNull()
+        assertThat(database.recurrenceDao().getById("rule-1")).isNotNull()
+    }
+
+    @Test
+    fun deleteTask_entireSeries_removesRecurrence() = runTest {
+        val created = repository.createTask(
+            title = "Series",
+            location = TaskLocation.TODAY,
+            recurrence = com.fourctech.todaylist.domain.model.RecurrenceRule(
+                id = "rule-2",
+                type = com.fourctech.todaylist.domain.model.RecurrenceType.WEEKLY,
+                interval = 1,
+                startDate = clock.today(),
+                endDate = null,
+                weekdays = setOf(java.time.DayOfWeek.MONDAY),
+                dayOfMonth = null,
+            ),
+        )
+
+        repository.deleteTask(created.id, com.fourctech.todaylist.domain.model.DeleteScope.ENTIRE_SERIES)
+
+        assertThat(repository.getTask(created.id)).isNull()
+        assertThat(database.recurrenceDao().getById("rule-2")).isNull()
+    }
+
+    @Test
     fun reorderTasks_updatesSortOrder() = runTest {
         val a = repository.createTask(title = "A", location = TaskLocation.TODAY)
         val b = repository.createTask(title = "B", location = TaskLocation.TODAY)

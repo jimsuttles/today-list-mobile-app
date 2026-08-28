@@ -13,6 +13,13 @@ sealed class Route(val path: String) {
         }
     }
 
+    data class TaskDetail(val taskId: String) : Route("task/$taskId") {
+        companion object {
+            const val pattern = "task/{taskId}"
+            const val arg = "taskId"
+        }
+    }
+
     companion object {
         val bottomBar = listOf(Today, Later, History, Settings)
     }
