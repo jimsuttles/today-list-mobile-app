@@ -9,6 +9,9 @@ Calm today / later todos
 ## Bundle ID
 com.fourctech.todaylist
 
+## Apple Team
+4CTech LLC (`X6T2496428`)
+
 ## Category
 Productivity
 

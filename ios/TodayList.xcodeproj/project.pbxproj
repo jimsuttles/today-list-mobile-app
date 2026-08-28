@@ -502,11 +502,11 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					374D7EB878C3009902CAF025 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = X6T2496428;
 						ProvisioningStyle = Automatic;
 					};
 					D5190E5F856881272CF1FEFD = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = X6T2496428;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -628,7 +628,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TodayListWidget/TodayListWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayListWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -704,7 +704,7 @@
 				CODE_SIGN_ENTITLEMENTS = TodayList/TodayList.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayList/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
@@ -730,7 +730,7 @@
 				CODE_SIGN_ENTITLEMENTS = TodayList/TodayList.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayList/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
@@ -771,7 +771,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TodayListWidget/TodayListWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayListWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";

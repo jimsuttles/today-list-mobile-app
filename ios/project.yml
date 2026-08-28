@@ -30,7 +30,7 @@ targets:
         INFOPLIST_KEY_NSUserTrackingUsageDescription: Today List uses this identifier to show relevant ads if you have not removed ads.
         CODE_SIGN_ENTITLEMENTS: TodayList/TodayList.entitlements
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: "X6T2496428"
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
     dependencies:
@@ -72,7 +72,7 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_ENTITLEMENTS: TodayListWidget/TodayListWidget.entitlements
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: "X6T2496428"
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
         SKIP_INSTALL: YES
     info:
