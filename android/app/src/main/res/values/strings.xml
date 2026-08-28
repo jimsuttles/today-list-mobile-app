@@ -7,4 +7,10 @@
     <string name="feedback_email">jim@4ctech.io</string>
     <string name="reminder_notification_title">Task reminder</string>
     <string name="reminder_fallback_title">Today List task</string>
+    <string name="widget_today_label">Today</string>
+    <string name="widget_today_description">See and complete today\'s tasks from your home screen</string>
+    <string name="widget_loading">Loading…</string>
+    <string name="widget_preview_body">3 left</string>
+    <string name="widget_all_clear">You\'re clear</string>
+    <string name="widget_tasks_left">%1$d left</string>
 </resources>
