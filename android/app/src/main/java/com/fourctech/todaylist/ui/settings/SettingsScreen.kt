@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
@@ -391,7 +392,12 @@ private fun SettingsNavRow(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .sizeIn(minHeight = 48.dp)
+            .clickable(
+                onClick = onClick,
+                role = Role.Button,
+                onClickLabel = label,
+            )
             .padding(vertical = 12.dp),
     )
 }

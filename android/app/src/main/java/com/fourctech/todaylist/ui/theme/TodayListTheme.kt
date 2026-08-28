@@ -27,6 +27,9 @@ private val LightColors = lightColorScheme(
     onSurface = Ink,
     surfaceVariant = Color(0xFFE8EEF3),
     onSurfaceVariant = Slate,
+    outline = Color(0xFF6B7C8A),
+    error = Color(0xFFB3261E),
+    onError = Color.White,
 )
 
 private val DarkColors = darkColorScheme(
@@ -40,6 +43,9 @@ private val DarkColors = darkColorScheme(
     onSurface = Color(0xFFE8EEF3),
     surfaceVariant = Color(0xFF24303A),
     onSurfaceVariant = Color(0xFFB8C4CE),
+    outline = Color(0xFF8A9AAB),
+    error = Color(0xFFF2B8B5),
+    onError = Color(0xFF601410),
 )
 
 val LocalHapticsEnabled = staticCompositionLocalOf { true }

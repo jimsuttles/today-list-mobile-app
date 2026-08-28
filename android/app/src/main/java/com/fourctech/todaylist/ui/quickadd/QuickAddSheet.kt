@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,11 +65,25 @@ fun QuickAddSheet(
                     selected = state.location == TaskLocation.TODAY,
                     onClick = { viewModel.onLocationChange(TaskLocation.TODAY) },
                     label = { Text("Today") },
+                    modifier = Modifier.semantics {
+                        contentDescription = if (state.location == TaskLocation.TODAY) {
+                            "List Today, selected"
+                        } else {
+                            "List Today"
+                        }
+                    },
                 )
                 FilterChip(
                     selected = state.location == TaskLocation.LATER,
                     onClick = { viewModel.onLocationChange(TaskLocation.LATER) },
                     label = { Text("Later") },
+                    modifier = Modifier.semantics {
+                        contentDescription = if (state.location == TaskLocation.LATER) {
+                            "List Later, selected"
+                        } else {
+                            "List Later"
+                        }
+                    },
                 )
             }
             Row(

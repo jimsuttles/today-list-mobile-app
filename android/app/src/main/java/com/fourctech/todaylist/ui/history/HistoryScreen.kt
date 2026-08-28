@@ -18,6 +18,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -95,8 +97,14 @@ private fun HistoryRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+            .clickable(
+                onClick = onClick,
+                onClickLabel = "Open completed task ${record.title}",
+            )
+            .padding(horizontal = 20.dp, vertical = 14.dp)
+            .semantics {
+                contentDescription = "Completed: ${record.title}"
+            },
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(

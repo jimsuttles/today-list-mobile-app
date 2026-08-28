@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -18,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,11 +55,16 @@ fun TaskRow(
         TaskLocation.TODAY -> "Move to Later"
         TaskLocation.LATER -> "Move to Today"
     }
+    val openLabel = "Open ${task.title}"
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onOpen)
+            .sizeIn(minHeight = 48.dp)
+            .clickable(
+                onClick = onOpen,
+                onClickLabel = openLabel,
+            )
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -66,7 +75,9 @@ fun TaskRow(
                 }
                 onComplete()
             },
-            modifier = Modifier.semantics { contentDescription = "Complete ${task.title}" },
+            modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .semantics { contentDescription = "Complete ${task.title}" },
         ) {
             Icon(
                 imageVector = Icons.Outlined.RadioButtonUnchecked,
@@ -95,8 +106,11 @@ fun TaskRow(
                 )
             }
         }
-        IconButton(onClick = { menuOpen = true }) {
-            Icon(Icons.Filled.MoreVert, contentDescription = "Task actions")
+        IconButton(
+            onClick = { menuOpen = true },
+            modifier = Modifier.minimumInteractiveComponentSize(),
+        ) {
+            Icon(Icons.Filled.MoreVert, contentDescription = "Actions for ${task.title}")
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                 DropdownMenuItem(
                     text = { Text(moveLabel) },
@@ -139,7 +153,10 @@ fun EmptyTasksState(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp, vertical = 48.dp),
+            .padding(horizontal = 32.dp, vertical = 48.dp)
+            .semantics {
+                contentDescription = "$title. $body"
+            },
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -172,6 +189,11 @@ fun TodayProgressHeader(
         text = label,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+        modifier = modifier
+            .padding(horizontal = 20.dp, vertical = 4.dp)
+            .semantics {
+                contentDescription = label
+                liveRegion = LiveRegionMode.Polite
+            },
     )
 }

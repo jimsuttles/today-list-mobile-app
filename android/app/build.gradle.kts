@@ -27,6 +27,16 @@ val testAdMobBannerUnitId = "ca-app-pub-3940256099942544/6300978111"
 val releaseAdMobAppId = propOrEnv("ADMOB_APP_ID") ?: testAdMobAppId
 val releaseAdMobBannerUnitId = propOrEnv("ADMOB_BANNER_UNIT_ID") ?: testAdMobBannerUnitId
 
+val signStoreFile = propOrEnv("TL_SIGN_STORE_FILE")
+val signKeyAlias = propOrEnv("TL_SIGN_KEY_ALIAS")
+val signStorePassword = propOrEnv("TL_SIGN_STORE_PASSWORD")
+val signKeyPassword = propOrEnv("TL_SIGN_KEY_PASSWORD")
+val hasReleaseSigning =
+    !signStoreFile.isNullOrBlank() &&
+        !signKeyAlias.isNullOrBlank() &&
+        !signStorePassword.isNullOrBlank() &&
+        !signKeyPassword.isNullOrBlank()
+
 android {
     namespace = "com.fourctech.todaylist"
     compileSdk = 36
@@ -50,6 +60,17 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(signStoreFile!!)
+                storePassword = signStorePassword
+                keyAlias = signKeyAlias
+                keyPassword = signKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug {
             buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$testAdMobBannerUnitId\"")
@@ -63,6 +84,9 @@ android {
             )
             buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$releaseAdMobBannerUnitId\"")
             manifestPlaceholders["admobAppId"] = releaseAdMobAppId
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
