@@ -28,10 +28,12 @@ Productivity
 Free with ads · Contains ads · In-app purchases
 
 ## Privacy policy URL
-https://www.4ctech.io/today-list/privacy/
+https://www.4ctech.io/today-list/privacy/  
+(Draft ready to publish: `store/legal/privacy.md`)
 
 ## Terms URL
-https://www.4ctech.io/today-list/terms/
+https://www.4ctech.io/today-list/terms/  
+(Draft ready to publish: `store/legal/terms.md`)
 
 ## Contact email
 jim@4ctech.io

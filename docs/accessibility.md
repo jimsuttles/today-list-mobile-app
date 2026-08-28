@@ -15,7 +15,7 @@
 IconButtons and settings rows use Material minimum interactive size (≥ 48dp).
 
 ## Contrast
-Theme defines explicit `outline` / `error` colors for light and dark schemes. Primary navy / soft blue keep on-colors at high contrast.
+Theme defines navy primary, coral secondary, and explicit `outline` / `error` colors for light and dark schemes. Selected chips and the Today progress fill use coral on high-contrast on-colors.
 
 ## Manual smoke (TalkBack)
 1. Enable TalkBack → open Today → complete a task → Undo snackbar
