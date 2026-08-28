@@ -12,6 +12,8 @@ interface TaskRepository {
 
     suspend fun getTask(taskId: String): Task?
 
+    suspend fun getTodayTasks(): List<Task>
+
     suspend fun createTask(
         title: String,
         notes: String? = null,
@@ -36,6 +38,9 @@ interface TaskRepository {
     )
 
     suspend fun deleteTask(taskId: String)
+
+    /** Keeps tasks on Today and refreshes [scheduledDate] for the new day. */
+    suspend fun keepOnTodayForNewDay(taskIds: List<String>)
 
     /** Reorders tasks within [location]; [orderedTaskIds] is front-to-back. */
     suspend fun reorderTasks(location: TaskLocation, orderedTaskIds: List<String>)

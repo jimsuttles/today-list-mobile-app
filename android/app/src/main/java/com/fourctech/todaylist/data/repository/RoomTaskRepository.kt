@@ -43,6 +43,9 @@ class RoomTaskRepository @Inject constructor(
     override suspend fun getTask(taskId: String): Task? =
         taskDao.getTaskById(taskId)?.toDomainTask()
 
+    override suspend fun getTodayTasks(): List<Task> =
+        taskDao.getTodayTasks().mapNotNull { it.toDomainTask() }
+
     override suspend fun createTask(
         title: String,
         notes: String?,
@@ -234,6 +237,21 @@ class RoomTaskRepository @Inject constructor(
             taskDao.deleteTask(taskId)
             if (recurrenceId != null) {
                 recurrenceDao.delete(recurrenceId)
+            }
+        }
+    }
+
+    override suspend fun keepOnTodayForNewDay(taskIds: List<String>) {
+        if (taskIds.isEmpty()) return
+        val now = clock.now()
+        val today = clock.today()
+        database.withTransaction {
+            taskIds.forEach { id ->
+                val task = taskDao.getTaskById(id) ?: return@forEach
+                if (task.status != TaskStatus.TODAY) return@forEach
+                taskDao.updateTask(
+                    task.copy(scheduledDate = today, updatedAt = now),
+                )
             }
         }
     }
