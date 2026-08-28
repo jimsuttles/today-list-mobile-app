@@ -35,4 +35,32 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 ```
 
 Store listing draft and Play checklist: [`store/play/listing.md`](store/play/listing.md)  
-Accessibility notes: [`docs/accessibility.md`](docs/accessibility.md)
+
+## iOS
+
+Requires Xcode 15+ (iOS 17 deployment target). Generate the project if needed:
+
+```bash
+cd ios
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+xcodegen generate
+open TodayList.xcodeproj
+```
+
+```bash
+cd ios
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+xcodebuild -scheme TodayList -destination 'platform=iOS Simulator,name=iPhone 16' test
+```
+
+Bundle ID: `com.fourctech.todaylist`  
+App Store listing draft: [`store/appstore/listing.md`](store/appstore/listing.md)
+
+## Docs
+
+- [Architecture](docs/architecture.md) — cross-platform design
+- [Project plan](docs/project-plan.md) — Android / iOS phases
+- [iOS architecture](docs/ios-architecture.md)
+- [Android persistence](docs/android-persistence-foundation.md)
+- [Accessibility](docs/accessibility.md)
+

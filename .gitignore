@@ -19,3 +19,11 @@ android/keystore/
 google-services.json
 admob.properties
 Secrets.xcconfig
+
+# Xcode / iOS
+ios/xcuserdata/
+**/xcuserdata/
+*.xcuserstate
+ios/.build/
+ios/DerivedData/
+*.ipa
