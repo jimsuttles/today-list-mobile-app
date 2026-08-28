@@ -144,11 +144,16 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     fun onReminderTimeSelected(hour: Int, minute: Int) {
-        val current = _uiState.value.reminderAt ?: defaultReminderInstant()
         val zone = clock.zoneId()
-        val date = LocalDateTime.ofInstant(current, zone).toLocalDate()
-        val updated = LocalDateTime.of(date, LocalTime.of(hour, minute)).atZone(zone).toInstant()
-        _uiState.update { it.copy(reminderEnabled = true, reminderAt = updated) }
+        val today = clock.today()
+        var dateTime = java.time.LocalDateTime.of(today, LocalTime.of(hour, minute))
+        var instant = dateTime.atZone(zone).toInstant()
+        // If that clock time already passed today, use tomorrow (unless within bump window).
+        if (!instant.isAfter(clock.now())) {
+            dateTime = dateTime.plusDays(1)
+            instant = dateTime.atZone(zone).toInstant()
+        }
+        _uiState.update { it.copy(reminderEnabled = true, reminderAt = instant) }
         scheduleAutoSave(immediate = true)
     }
 
