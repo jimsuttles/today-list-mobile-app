@@ -9,6 +9,7 @@ import com.fourctech.todaylist.data.repository.DataStoreSettingsRepository
 import com.fourctech.todaylist.data.repository.RoomTaskRepository
 import com.fourctech.todaylist.domain.model.RolloverMode
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.domain.recurrence.DefaultRecurrenceEngine
 import com.google.common.truth.Truth.assertThat
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
@@ -48,6 +49,7 @@ class RolloverManagerTest {
             occurrenceDao = database.occurrenceDao(),
             completionEventDao = database.completionEventDao(),
             clock = clock,
+            recurrenceEngine = DefaultRecurrenceEngine(),
         )
         val dataStore = PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("rollover_test_${System.nanoTime()}") },

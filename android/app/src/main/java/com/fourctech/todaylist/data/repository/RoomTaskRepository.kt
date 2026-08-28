@@ -15,6 +15,7 @@ import com.fourctech.todaylist.domain.model.DeleteScope
 import com.fourctech.todaylist.domain.model.RecurrenceRule
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.domain.recurrence.RecurrenceEngine
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import java.util.UUID
 import javax.inject.Inject
@@ -30,6 +31,7 @@ class RoomTaskRepository @Inject constructor(
     private val occurrenceDao: OccurrenceDao,
     private val completionEventDao: CompletionEventDao,
     private val clock: ClockProvider,
+    private val recurrenceEngine: RecurrenceEngine,
 ) : TaskRepository {
 
     override fun observeTodayTasks(): Flow<List<Task>> =
@@ -164,6 +166,7 @@ class RoomTaskRepository @Inject constructor(
             if (task.status == TaskStatus.DELETED) return@withTransaction null
 
             val open = occurrenceDao.getOpenOccurrence(taskId)
+            val occurrenceDate = open?.occurrenceDate ?: task.scheduledDate ?: today
             val occurrenceId = if (open != null) {
                 occurrenceDao.update(open.copy(completedAt = now))
                 open.id
@@ -173,7 +176,7 @@ class RoomTaskRepository @Inject constructor(
                     TaskOccurrenceEntity(
                         id = newId,
                         taskId = taskId,
-                        occurrenceDate = task.scheduledDate ?: today,
+                        occurrenceDate = occurrenceDate,
                         completedAt = now,
                         movedToLater = task.status == TaskStatus.LATER,
                         createdAt = now,
@@ -194,11 +197,40 @@ class RoomTaskRepository @Inject constructor(
                 ),
             )
 
-            // Non-recurring: soft-delete from active lists. Recurring stays for next occurrence (engine later).
-            if (task.recurrenceId == null) {
-                taskDao.updateTask(
-                    task.copy(status = TaskStatus.DELETED, updatedAt = now),
-                )
+            val recurrenceId = task.recurrenceId
+            if (recurrenceId == null) {
+                taskDao.updateTask(task.copy(status = TaskStatus.DELETED, updatedAt = now))
+            } else {
+                val rule = recurrenceDao.getById(recurrenceId)?.toDomain()
+                val nextDate = rule?.let { recurrenceEngine.nextOccurrence(it, occurrenceDate) }
+                if (nextDate == null) {
+                    taskDao.updateTask(task.copy(status = TaskStatus.DELETED, updatedAt = now))
+                } else {
+                    occurrenceDao.insert(
+                        TaskOccurrenceEntity(
+                            id = UUID.randomUUID().toString(),
+                            taskId = taskId,
+                            occurrenceDate = nextDate,
+                            completedAt = null,
+                            movedToLater = false,
+                            createdAt = now,
+                        ),
+                    )
+                    val sortOrder = if (task.status == TaskStatus.TODAY) {
+                        task.sortOrder
+                    } else {
+                        taskDao.maxSortOrder(TaskStatus.TODAY) + 1
+                    }
+                    taskDao.updateTask(
+                        task.copy(
+                            status = TaskStatus.TODAY,
+                            sortOrder = sortOrder,
+                            scheduledDate = nextDate,
+                            updatedAt = now,
+                            reminderAt = null,
+                        ),
+                    )
+                }
             }
             eventId
         }
@@ -214,6 +246,16 @@ class RoomTaskRepository @Inject constructor(
             val event = completionEventDao.getById(completionEventId) ?: return@withTransaction
             val taskId = event.taskId
             if (taskId != null) {
+                val completedOccurrence = event.occurrenceId?.let { occurrenceDao.getById(it) }
+                completedOccurrence?.let { occurrence ->
+                    occurrenceDao.deleteOpenAfter(taskId, occurrence.occurrenceDate)
+                    occurrenceDao.update(
+                        occurrence.copy(
+                            completedAt = null,
+                            movedToLater = restoreTo == TaskLocation.LATER,
+                        ),
+                    )
+                }
                 val task = taskDao.getTaskById(taskId)
                 if (task != null) {
                     val sortOrder = taskDao.maxSortOrder(status) + 1
@@ -222,19 +264,10 @@ class RoomTaskRepository @Inject constructor(
                             status = status,
                             sortOrder = sortOrder,
                             updatedAt = now,
-                            scheduledDate = if (restoreTo == TaskLocation.TODAY) clock.today() else task.scheduledDate,
+                            scheduledDate = completedOccurrence?.occurrenceDate
+                                ?: if (restoreTo == TaskLocation.TODAY) clock.today() else task.scheduledDate,
                         ),
                     )
-                }
-                event.occurrenceId?.let { occurrenceId ->
-                    occurrenceDao.getById(occurrenceId)?.let { occurrence ->
-                        occurrenceDao.update(
-                            occurrence.copy(
-                                completedAt = null,
-                                movedToLater = restoreTo == TaskLocation.LATER,
-                            ),
-                        )
-                    }
                 }
             }
             completionEventDao.delete(completionEventId)

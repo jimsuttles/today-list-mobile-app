@@ -38,6 +38,16 @@ interface OccurrenceDao {
     @Update
     suspend fun update(occurrence: TaskOccurrenceEntity)
 
+    @Query(
+        """
+        DELETE FROM task_occurrences
+        WHERE taskId = :taskId
+          AND occurrenceDate > :afterDate
+          AND completedAt IS NULL
+        """,
+    )
+    suspend fun deleteOpenAfter(taskId: String, afterDate: java.time.LocalDate)
+
     @Query("DELETE FROM task_occurrences WHERE taskId = :taskId")
     suspend fun deleteForTask(taskId: String)
 }

@@ -9,6 +9,7 @@ import com.fourctech.todaylist.data.local.db.TodayListDatabase
 import com.fourctech.todaylist.data.repository.RoomHistoryRepository
 import com.fourctech.todaylist.data.repository.RoomTaskRepository
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.domain.recurrence.DefaultRecurrenceEngine
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.Executors
 import kotlinx.coroutines.flow.first
@@ -44,6 +45,7 @@ class CompleteAndRecreateUseCaseTest {
             occurrenceDao = database.occurrenceDao(),
             completionEventDao = database.completionEventDao(),
             clock = FakeClockProvider(),
+            recurrenceEngine = DefaultRecurrenceEngine(),
         )
         historyRepository = RoomHistoryRepository(database.completionEventDao())
         completeTask = CompleteTaskUseCase(taskRepository, NoOpNotificationScheduler())

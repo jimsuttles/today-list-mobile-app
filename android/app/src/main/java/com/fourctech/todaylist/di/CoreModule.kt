@@ -9,6 +9,8 @@ import com.fourctech.todaylist.core.notifications.NoOpNotificationScheduler
 import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.core.time.ClockProvider
 import com.fourctech.todaylist.core.time.SystemClockProvider
+import com.fourctech.todaylist.domain.recurrence.DefaultRecurrenceEngine
+import com.fourctech.todaylist.domain.recurrence.RecurrenceEngine
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,6 +29,10 @@ abstract class CoreModule {
     @Binds
     @Singleton
     abstract fun bindNotificationScheduler(impl: NoOpNotificationScheduler): NotificationScheduler
+
+    @Binds
+    @Singleton
+    abstract fun bindRecurrenceEngine(impl: DefaultRecurrenceEngine): RecurrenceEngine
 
     companion object {
         @Provides
