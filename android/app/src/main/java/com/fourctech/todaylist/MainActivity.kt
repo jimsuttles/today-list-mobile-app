@@ -51,9 +51,13 @@ class MainActivity : ComponentActivity() {
         analytics.log(AnalyticsEvents.APP_OPEN)
         enableEdgeToEdge()
 
+        // Start Mobile Ads after consent; banner waits for AdsManager.initialized.
         com.fourctech.todaylist.core.ads.AdsConsent.gather(this) {
             (application as TodayListApplication).initializeAdsIfNeeded()
         }
+        // Also kick off init if consent no-ops quickly / already determined.
+        // Safe to call twice — AdsManager dedupes.
+        (application as TodayListApplication).initializeAdsIfNeeded()
 
         setContent {
             val settings by settingsRepository.observeSettings()
