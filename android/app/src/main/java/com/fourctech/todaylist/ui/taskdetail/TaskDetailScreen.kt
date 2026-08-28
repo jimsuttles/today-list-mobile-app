@@ -25,6 +25,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,10 +72,11 @@ fun TaskDetailScreen(
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) {
-        viewModel.onNotificationPermissionHandled()
+    ) { granted ->
+        viewModel.onNotificationPermissionResult(granted)
     }
 
     LaunchedEffect(viewModel) {
@@ -82,6 +85,11 @@ fun TaskDetailScreen(
                 TaskDetailEvent.NavigateBack,
                 TaskDetailEvent.Deleted,
                 -> onBack()
+                TaskDetailEvent.NotificationPermissionDenied -> {
+                    snackbarHostState.showSnackbar(
+                        "Notifications are off — enable them in system settings to get reminders.",
+                    )
+                }
             }
         }
     }
@@ -89,7 +97,7 @@ fun TaskDetailScreen(
     LaunchedEffect(state.needsNotificationPermission) {
         if (!state.needsNotificationPermission) return@LaunchedEffect
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            viewModel.onNotificationPermissionHandled()
+            viewModel.onNotificationPermissionResult(granted = true)
             return@LaunchedEffect
         }
         val granted = ContextCompat.checkSelfPermission(
@@ -97,7 +105,7 @@ fun TaskDetailScreen(
             Manifest.permission.POST_NOTIFICATIONS,
         ) == PackageManager.PERMISSION_GRANTED
         if (granted) {
-            viewModel.onNotificationPermissionHandled()
+            viewModel.onNotificationPermissionResult(granted = true)
         } else {
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -162,6 +170,7 @@ fun TaskDetailScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Task") },

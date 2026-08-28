@@ -102,16 +102,14 @@ class TaskDetailViewModel @Inject constructor(
         viewModelScope.launch {
             if (enabled) {
                 val settings = settingsRepository.getSettings()
+                val alreadyPrompted = settings.notificationPermissionPrompted
                 val default = defaultReminderInstant()
                 _uiState.update {
                     it.copy(
                         reminderEnabled = true,
                         reminderAt = it.reminderAt ?: default,
-                        needsNotificationPermission = !settings.notificationPermissionPrompted,
+                        needsNotificationPermission = !alreadyPrompted,
                     )
-                }
-                if (!settings.notificationPermissionPrompted) {
-                    settingsRepository.setNotificationPermissionPrompted(true)
                 }
             } else {
                 _uiState.update {
@@ -126,8 +124,14 @@ class TaskDetailViewModel @Inject constructor(
         }
     }
 
-    fun onNotificationPermissionHandled() {
-        _uiState.update { it.copy(needsNotificationPermission = false) }
+    fun onNotificationPermissionResult(granted: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setNotificationPermissionPrompted(true)
+            _uiState.update { it.copy(needsNotificationPermission = false) }
+            if (!granted) {
+                _events.emit(TaskDetailEvent.NotificationPermissionDenied)
+            }
+        }
     }
 
     fun onReminderDateSelected(date: LocalDate) {
@@ -232,10 +236,8 @@ class TaskDetailViewModel @Inject constructor(
     }
 
     private fun defaultReminderInstant(): Instant {
-        val zone = clock.zoneId()
-        return LocalDateTime.of(clock.today().plusDays(1), LocalTime.of(9, 0))
-            .atZone(zone)
-            .toInstant()
+        // Near-term default so reminders are easy to verify; users can edit date/time.
+        return clock.now().plusSeconds(120)
     }
 
     private fun Task.toUiState(): TaskDetailUiState =
@@ -255,4 +257,5 @@ class TaskDetailViewModel @Inject constructor(
 sealed class TaskDetailEvent {
     data object NavigateBack : TaskDetailEvent()
     data object Deleted : TaskDetailEvent()
+    data object NotificationPermissionDenied : TaskDetailEvent()
 }

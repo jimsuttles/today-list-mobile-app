@@ -4,8 +4,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
+import com.fourctech.todaylist.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Instant
 import javax.inject.Inject
@@ -24,25 +25,25 @@ class AndroidNotificationScheduler @Inject constructor(
         if (triggerAt <= System.currentTimeMillis()) return
 
         ReminderNotifications.ensureChannel(context)
-        val pending = broadcastPendingIntent(taskId, title)
         val manager = alarmManager ?: return
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && manager.canScheduleExactAlarms() -> {
-                manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-            }
-            else -> {
-                manager.set(AlarmManager.RTC_WAKEUP, triggerAt, pending)
-            }
-        }
+        val fireIntent = broadcastPendingIntent(taskId, title)
+        // setAlarmClock is the reliable user-facing path (not deferred like setAndAllowWhileIdle).
+        val showIntent = PendingIntent.getActivity(
+            context,
+            ReminderIntents.requestCodeFor(taskId),
+            Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                data = Uri.parse(ReminderIntents.taskDeepLink(taskId))
+                putExtra(ReminderIntents.EXTRA_TASK_ID, taskId)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        manager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerAt, showIntent), fireIntent)
     }
 
     override suspend fun cancelReminder(taskId: String) {
         val pending = broadcastPendingIntent(taskId, title = "")
         alarmManager?.cancel(pending)
-        pending.cancel()
         NotificationManagerCompat.from(context).cancel(ReminderIntents.requestCodeFor(taskId))
     }
 
