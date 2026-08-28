@@ -74,13 +74,29 @@ class RoomTaskRepositoryTest {
         val created = repository.createTask(title = "Original title", location = TaskLocation.TODAY)
         repository.updateTask(created.copy(title = "Edited title"))
 
-        repository.completeTask(created.id)
+        val eventId = repository.completeTask(created.id)
 
+        assertThat(eventId).isNotNull()
         assertThat(repository.observeTodayTasks().first()).isEmpty()
         val events = database.completionEventDao().observeAll().first()
         assertThat(events).hasSize(1)
+        assertThat(events.first().id).isEqualTo(eventId)
         assertThat(events.first().titleSnapshot).isEqualTo("Edited title")
         assertThat(events.first().taskId).isEqualTo(created.id)
+    }
+
+    @Test
+    fun uncompleteTask_restoresToPreviousLocation() = runTest {
+        val created = repository.createTask(title = "Parked", location = TaskLocation.LATER)
+
+        val eventId = repository.completeTask(created.id)!!
+        repository.uncompleteTask(eventId, TaskLocation.LATER)
+
+        assertThat(repository.observeTodayTasks().first()).isEmpty()
+        val later = repository.observeLaterTasks().first()
+        assertThat(later).hasSize(1)
+        assertThat(later.first().title).isEqualTo("Parked")
+        assertThat(database.completionEventDao().observeAll().first()).isEmpty()
     }
 
     @Test

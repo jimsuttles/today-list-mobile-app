@@ -5,10 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.repository.TaskRepository
+import com.fourctech.todaylist.domain.usecase.CompleteTaskResult
+import com.fourctech.todaylist.domain.usecase.CompleteTaskUseCase
+import com.fourctech.todaylist.domain.usecase.UndoCompleteTaskUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,14 +26,28 @@ data class LaterUiState(
 @HiltViewModel
 class LaterViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
+    private val completeTaskUseCase: CompleteTaskUseCase,
+    private val undoCompleteTaskUseCase: UndoCompleteTaskUseCase,
 ) : ViewModel() {
+
+    private val _undoEvents = MutableSharedFlow<CompleteTaskResult>(extraBufferCapacity = 1)
+    val undoEvents: SharedFlow<CompleteTaskResult> = _undoEvents.asSharedFlow()
 
     val uiState: StateFlow<LaterUiState> = taskRepository.observeLaterTasks()
         .map { LaterUiState(tasks = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LaterUiState())
 
     fun completeTask(taskId: String) {
-        viewModelScope.launch { taskRepository.completeTask(taskId) }
+        viewModelScope.launch {
+            val result = completeTaskUseCase(taskId) ?: return@launch
+            _undoEvents.emit(result)
+        }
+    }
+
+    fun undoComplete(result: CompleteTaskResult) {
+        viewModelScope.launch {
+            undoCompleteTaskUseCase(result.completionEventId, result.previousLocation)
+        }
     }
 
     fun moveToToday(taskId: String) {

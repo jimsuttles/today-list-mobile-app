@@ -27,9 +27,13 @@ interface TaskRepository {
 
     suspend fun moveToLater(taskId: String)
 
-    suspend fun completeTask(taskId: String)
+    /** Completes the task; returns the new completion event id, or null if missing. */
+    suspend fun completeTask(taskId: String): String?
 
-    suspend fun uncompleteTask(completionEventId: String)
+    suspend fun uncompleteTask(
+        completionEventId: String,
+        restoreTo: TaskLocation = TaskLocation.TODAY,
+    )
 
     suspend fun deleteTask(taskId: String)
 

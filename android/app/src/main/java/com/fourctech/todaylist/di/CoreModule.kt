@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.fourctech.todaylist.core.notifications.NoOpNotificationScheduler
+import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.core.time.ClockProvider
 import com.fourctech.todaylist.core.time.SystemClockProvider
 import dagger.Binds
@@ -21,6 +23,10 @@ abstract class CoreModule {
     @Binds
     @Singleton
     abstract fun bindClockProvider(impl: SystemClockProvider): ClockProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationScheduler(impl: NoOpNotificationScheduler): NotificationScheduler
 
     companion object {
         @Provides

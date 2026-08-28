@@ -21,11 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.ui.history.HistoryDetailScreen
 import com.fourctech.todaylist.ui.history.HistoryScreen
 import com.fourctech.todaylist.ui.later.LaterScreen
 import com.fourctech.todaylist.ui.quickadd.QuickAddSheet
@@ -52,6 +55,7 @@ fun TodayListApp() {
         BottomDestination(Route.Settings, "Settings", Icons.Filled.Settings),
     )
 
+    val onBottomBar = destinations.any { it.route.path == currentRoute }
     val showFab = currentRoute == Route.Today.path || currentRoute == Route.Later.path
     val quickAddLocation = if (currentRoute == Route.Later.path) {
         TaskLocation.LATER
@@ -61,22 +65,24 @@ fun TodayListApp() {
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                destinations.forEach { dest ->
-                    NavigationBarItem(
-                        selected = currentRoute == dest.route.path,
-                        onClick = {
-                            navController.navigate(dest.route.path) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            if (onBottomBar) {
+                NavigationBar {
+                    destinations.forEach { dest ->
+                        NavigationBarItem(
+                            selected = currentRoute == dest.route.path,
+                            onClick = {
+                                navController.navigate(dest.route.path) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Icon(dest.icon, contentDescription = dest.label) },
-                        label = { Text(dest.label) },
-                    )
+                            },
+                            icon = { Icon(dest.icon, contentDescription = dest.label) },
+                            label = { Text(dest.label) },
+                        )
+                    }
                 }
             }
         },
@@ -100,7 +106,17 @@ fun TodayListApp() {
                 LaterScreen(onOpenTask = { /* Phase 5 detail */ })
             }
             composable(Route.History.path) {
-                HistoryScreen()
+                HistoryScreen(
+                    onOpenCompletion = { id ->
+                        navController.navigate(Route.HistoryDetail(id).path)
+                    },
+                )
+            }
+            composable(
+                route = Route.HistoryDetail.pattern,
+                arguments = listOf(navArgument(Route.HistoryDetail.arg) { type = NavType.StringType }),
+            ) {
+                HistoryDetailScreen(onBack = { navController.popBackStack() })
             }
             composable(Route.Settings.path) {
                 SettingsScreen()

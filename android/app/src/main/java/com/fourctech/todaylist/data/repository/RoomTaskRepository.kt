@@ -142,12 +142,12 @@ class RoomTaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun completeTask(taskId: String) {
+    override suspend fun completeTask(taskId: String): String? {
         val now = clock.now()
         val today = clock.today()
-        database.withTransaction {
-            val task = taskDao.getTaskById(taskId) ?: return@withTransaction
-            if (task.status == TaskStatus.DELETED) return@withTransaction
+        return database.withTransaction {
+            val task = taskDao.getTaskById(taskId) ?: return@withTransaction null
+            if (task.status == TaskStatus.DELETED) return@withTransaction null
 
             val open = occurrenceDao.getOpenOccurrence(taskId)
             val occurrenceId = if (open != null) {
@@ -168,9 +168,10 @@ class RoomTaskRepository @Inject constructor(
                 newId
             }
 
+            val eventId = UUID.randomUUID().toString()
             completionEventDao.insert(
                 CompletionEventEntity(
-                    id = UUID.randomUUID().toString(),
+                    id = eventId,
                     taskId = taskId,
                     occurrenceId = occurrenceId,
                     titleSnapshot = task.title,
@@ -185,30 +186,40 @@ class RoomTaskRepository @Inject constructor(
                     task.copy(status = TaskStatus.DELETED, updatedAt = now),
                 )
             }
+            eventId
         }
     }
 
-    override suspend fun uncompleteTask(completionEventId: String) {
+    override suspend fun uncompleteTask(
+        completionEventId: String,
+        restoreTo: TaskLocation,
+    ) {
         val now = clock.now()
+        val status = restoreTo.toStatus()
         database.withTransaction {
             val event = completionEventDao.getById(completionEventId) ?: return@withTransaction
             val taskId = event.taskId
             if (taskId != null) {
                 val task = taskDao.getTaskById(taskId)
                 if (task != null) {
-                    val sortOrder = taskDao.maxSortOrder(TaskStatus.TODAY) + 1
+                    val sortOrder = taskDao.maxSortOrder(status) + 1
                     taskDao.updateTask(
                         task.copy(
-                            status = TaskStatus.TODAY,
+                            status = status,
                             sortOrder = sortOrder,
                             updatedAt = now,
-                            scheduledDate = clock.today(),
+                            scheduledDate = if (restoreTo == TaskLocation.TODAY) clock.today() else task.scheduledDate,
                         ),
                     )
                 }
                 event.occurrenceId?.let { occurrenceId ->
                     occurrenceDao.getById(occurrenceId)?.let { occurrence ->
-                        occurrenceDao.update(occurrence.copy(completedAt = null))
+                        occurrenceDao.update(
+                            occurrence.copy(
+                                completedAt = null,
+                                movedToLater = restoreTo == TaskLocation.LATER,
+                            ),
+                        )
                     }
                 }
             }
