@@ -29,6 +29,10 @@ object AnalyticsEvents {
     const val SETTINGS_WEEK_START_CHANGED = "settings_week_start_changed"
     const val SETTINGS_HAPTICS_CHANGED = "settings_haptics_changed"
     const val DATA_CLEARED = "data_cleared"
+    const val REMOVE_ADS_VIEWED = "remove_ads_viewed"
+    const val REMOVE_ADS_STARTED = "remove_ads_started"
+    const val REMOVE_ADS_COMPLETED = "remove_ads_completed"
+    const val REMOVE_ADS_RESTORED = "remove_ads_restored"
 }
 
 object AnalyticsParams {

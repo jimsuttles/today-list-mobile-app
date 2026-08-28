@@ -6,6 +6,27 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+import java.util.Properties
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { stream -> localProperties.load(stream) }
+}
+
+fun propOrEnv(name: String): String? {
+    val fromFile = localProperties.getProperty(name)
+    if (!fromFile.isNullOrBlank()) return fromFile
+    val fromEnv = System.getenv(name)
+    return if (!fromEnv.isNullOrBlank()) fromEnv else null
+}
+
+// Google sample IDs — safe for debug / until production units exist.
+val testAdMobAppId = "ca-app-pub-3940256099942544~3347511713"
+val testAdMobBannerUnitId = "ca-app-pub-3940256099942544/6300978111"
+val releaseAdMobAppId = propOrEnv("ADMOB_APP_ID") ?: testAdMobAppId
+val releaseAdMobBannerUnitId = propOrEnv("ADMOB_BANNER_UNIT_ID") ?: testAdMobBannerUnitId
+
 android {
     namespace = "com.fourctech.todaylist"
     compileSdk = 36
@@ -21,6 +42,8 @@ android {
 
         buildConfigField("String", "PUBLISHER_NAME", "\"4CTech, LLC\"")
         buildConfigField("String", "REMOVE_ADS_PRODUCT_ID", "\"com.fourctech.todaylist.removeads\"")
+        buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$testAdMobBannerUnitId\"")
+        manifestPlaceholders["admobAppId"] = testAdMobAppId
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -28,12 +51,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$testAdMobBannerUnitId\"")
+            manifestPlaceholders["admobAppId"] = testAdMobAppId
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$releaseAdMobBannerUnitId\"")
+            manifestPlaceholders["admobAppId"] = releaseAdMobAppId
         }
     }
 
@@ -99,6 +128,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
 
+    implementation("com.google.android.gms:play-services-ads:23.6.0")
+    implementation("com.google.android.ump:user-messaging-platform:3.1.0")
+    implementation("com.android.billingclient:billing-ktx:7.1.1")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -116,4 +149,3 @@ if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
     apply(plugin = "com.google.firebase.crashlytics")
 }
-

@@ -27,6 +27,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,9 +51,11 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onRemoveAds: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val toastMessage by viewModel.toastMessage.collectAsStateWithLifecycle()
     var showClearHistory by remember { mutableStateOf(false) }
     var showDeleteAll by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -60,6 +63,11 @@ fun SettingsScreen(
     val termsUrl = stringResource(R.string.terms_url)
     val feedbackEmail = stringResource(R.string.feedback_email)
 
+    LaunchedEffect(toastMessage) {
+        val message = toastMessage ?: return@LaunchedEffect
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        viewModel.consumeToast()
+    }
     fun openUrl(url: String) {
         try {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -170,6 +178,8 @@ fun SettingsScreen(
             onWeekStartChange = viewModel::setWeekStart,
             onHapticsChange = viewModel::setHapticsEnabled,
             onOpenNotifications = ::openAppNotificationSettings,
+            onRemoveAds = onRemoveAds,
+            onRestorePurchases = viewModel::restorePurchases,
             onClearHistory = { showClearHistory = true },
             onDeleteAll = { showDeleteAll = true },
             onFeedback = { sendEmail("Today List Feedback") },
@@ -188,6 +198,8 @@ private fun SettingsContent(
     onWeekStartChange: (WeekStart) -> Unit,
     onHapticsChange: (Boolean) -> Unit,
     onOpenNotifications: () -> Unit,
+    onRemoveAds: () -> Unit,
+    onRestorePurchases: () -> Unit,
     onClearHistory: () -> Unit,
     onDeleteAll: () -> Unit,
     onFeedback: () -> Unit,
@@ -252,6 +264,21 @@ private fun SettingsContent(
             checked = state.hapticsEnabled,
             onCheckedChange = onHapticsChange,
         )
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        SectionHeader("PREMIUM")
+        if (state.adsRemovedCached) {
+            Text(
+                text = "Ads removed",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 12.dp),
+            )
+        } else {
+            SettingsNavRow(label = "Remove Ads", onClick = onRemoveAds)
+        }
+        SettingsNavRow(label = "Restore Purchases", onClick = onRestorePurchases)
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 

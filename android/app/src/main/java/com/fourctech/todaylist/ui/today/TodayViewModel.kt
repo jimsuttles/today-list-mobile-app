@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 data class TodayUiState(
     val tasks: List<Task> = emptyList(),
     val sessionCompletedCount: Int = 0,
+    val adsRemoved: Boolean = false,
 )
 
 @HiltViewModel
@@ -34,6 +35,7 @@ class TodayViewModel @Inject constructor(
     private val completeTaskUseCase: CompleteTaskUseCase,
     private val undoCompleteTaskUseCase: UndoCompleteTaskUseCase,
     private val analytics: Analytics,
+    settingsRepository: com.fourctech.todaylist.domain.repository.SettingsRepository,
 ) : ViewModel() {
 
     private val sessionCompleted = MutableStateFlow(0)
@@ -43,8 +45,13 @@ class TodayViewModel @Inject constructor(
     val uiState: StateFlow<TodayUiState> = combine(
         taskRepository.observeTodayTasks(),
         sessionCompleted,
-    ) { tasks, completed ->
-        TodayUiState(tasks = tasks, sessionCompletedCount = completed)
+        settingsRepository.observeSettings(),
+    ) { tasks, completed, settings ->
+        TodayUiState(
+            tasks = tasks,
+            sessionCompletedCount = completed,
+            adsRemoved = settings.adsRemovedCached,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayUiState())
 
     fun completeTask(taskId: String) {

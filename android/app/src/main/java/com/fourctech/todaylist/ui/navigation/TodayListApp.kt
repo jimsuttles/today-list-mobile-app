@@ -32,6 +32,7 @@ import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.ui.history.HistoryDetailScreen
 import com.fourctech.todaylist.ui.history.HistoryScreen
 import com.fourctech.todaylist.ui.later.LaterScreen
+import com.fourctech.todaylist.ui.premium.RemoveAdsRoute
 import com.fourctech.todaylist.ui.quickadd.QuickAddSheet
 import com.fourctech.todaylist.ui.settings.SettingsScreen
 import com.fourctech.todaylist.ui.taskdetail.TaskDetailScreen
@@ -142,7 +143,12 @@ fun TodayListApp(
                 TaskDetailScreen(onBack = { navController.popBackStack() })
             }
             composable(Route.Settings.path) {
-                SettingsScreen()
+                SettingsScreen(
+                    onRemoveAds = { navController.navigate(Route.RemoveAds.path) },
+                )
+            }
+            composable(Route.RemoveAds.path) {
+                RemoveAdsRoute(onBack = { navController.popBackStack() })
             }
         }
     }

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fourctech.todaylist.ui.components.AdBannerSlot
 import com.fourctech.todaylist.ui.components.EmptyTasksState
 import com.fourctech.todaylist.ui.components.TaskRow
 import kotlinx.coroutines.flow.collectLatest
@@ -69,12 +70,13 @@ fun LaterScreen(
                 EmptyTasksState(
                     title = "Nothing waiting",
                     body = "Park tasks here when they aren't for today.",
+                    modifier = Modifier.weight(1f),
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 88.dp),
+                        .weight(1f)
+                        .padding(bottom = 8.dp),
                 ) {
                     itemsIndexed(state.tasks, key = { _, task -> task.id }) { index, task ->
                         TaskRow(
@@ -92,6 +94,7 @@ fun LaterScreen(
                     }
                 }
             }
+            AdBannerSlot(adsRemoved = state.adsRemoved)
         }
     }
 }

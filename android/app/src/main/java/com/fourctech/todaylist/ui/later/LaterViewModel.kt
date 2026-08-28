@@ -7,6 +7,7 @@ import com.fourctech.todaylist.core.analytics.AnalyticsEvents
 import com.fourctech.todaylist.core.analytics.AnalyticsParams
 import com.fourctech.todaylist.domain.model.Task
 import com.fourctech.todaylist.domain.model.TaskLocation
+import com.fourctech.todaylist.domain.repository.SettingsRepository
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import com.fourctech.todaylist.domain.usecase.CompleteTaskResult
 import com.fourctech.todaylist.domain.usecase.CompleteTaskUseCase
@@ -18,12 +19,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class LaterUiState(
     val tasks: List<Task> = emptyList(),
+    val adsRemoved: Boolean = false,
 )
 
 @HiltViewModel
@@ -32,14 +34,18 @@ class LaterViewModel @Inject constructor(
     private val completeTaskUseCase: CompleteTaskUseCase,
     private val undoCompleteTaskUseCase: UndoCompleteTaskUseCase,
     private val analytics: Analytics,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _undoEvents = MutableSharedFlow<CompleteTaskResult>(extraBufferCapacity = 1)
     val undoEvents: SharedFlow<CompleteTaskResult> = _undoEvents.asSharedFlow()
 
-    val uiState: StateFlow<LaterUiState> = taskRepository.observeLaterTasks()
-        .map { LaterUiState(tasks = it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LaterUiState())
+    val uiState: StateFlow<LaterUiState> = combine(
+        taskRepository.observeLaterTasks(),
+        settingsRepository.observeSettings(),
+    ) { tasks, settings ->
+        LaterUiState(tasks = tasks, adsRemoved = settings.adsRemovedCached)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LaterUiState())
 
     fun completeTask(taskId: String) {
         viewModelScope.launch {

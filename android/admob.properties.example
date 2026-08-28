@@ -1,0 +1,5 @@
+# Optional production AdMob IDs (copy values into local.properties).
+# ADMOB_APP_ID=ca-app-pub-xxxxxxxx~yyyyyyyyyy
+# ADMOB_BANNER_UNIT_ID=ca-app-pub-xxxxxxxx/yyyyyyyyyy
+#
+# Debug builds always use Google sample test IDs.

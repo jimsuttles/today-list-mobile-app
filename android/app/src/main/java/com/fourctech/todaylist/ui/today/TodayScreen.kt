@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fourctech.todaylist.ui.components.AdBannerSlot
 import com.fourctech.todaylist.ui.components.EmptyTasksState
 import com.fourctech.todaylist.ui.components.TaskRow
 import com.fourctech.todaylist.ui.components.TodayProgressHeader
@@ -74,12 +75,13 @@ fun TodayScreen(
                 EmptyTasksState(
                     title = "You're clear",
                     body = "Add something for today, or pull a task in from Later.",
+                    modifier = Modifier.weight(1f),
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 88.dp),
+                        .weight(1f)
+                        .padding(bottom = 8.dp),
                 ) {
                     itemsIndexed(state.tasks, key = { _, task -> task.id }) { index, task ->
                         TaskRow(
@@ -97,6 +99,7 @@ fun TodayScreen(
                     }
                 }
             }
+            AdBannerSlot(adsRemoved = state.adsRemoved)
         }
     }
 }

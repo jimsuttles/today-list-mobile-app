@@ -50,6 +50,11 @@ class MainActivity : ComponentActivity() {
         deepLinkTaskIdState.value = taskIdFromIntent(intent)
         analytics.log(AnalyticsEvents.APP_OPEN)
         enableEdgeToEdge()
+
+        com.fourctech.todaylist.core.ads.AdsConsent.gather(this) {
+            (application as TodayListApplication).initializeAdsIfNeeded()
+        }
+
         setContent {
             val settings by settingsRepository.observeSettings()
                 .collectAsStateWithLifecycle(initialValue = null)

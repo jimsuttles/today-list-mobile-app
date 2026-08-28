@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fourctech.todaylist.domain.model.CompletionRecord
+import com.fourctech.todaylist.ui.components.AdBannerSlot
 import com.fourctech.todaylist.ui.components.EmptyTasksState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -48,10 +49,11 @@ fun HistoryScreen(
             EmptyTasksState(
                 title = "No completions yet",
                 body = "Finished tasks show up here by day.",
+                modifier = Modifier.weight(1f),
             )
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(bottom = 24.dp),
             ) {
                 state.groups.forEach { group ->
@@ -68,6 +70,7 @@ fun HistoryScreen(
                 }
             }
         }
+        AdBannerSlot(adsRemoved = state.adsRemoved)
     }
 }
 

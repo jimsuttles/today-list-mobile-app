@@ -6,6 +6,8 @@ import com.fourctech.todaylist.core.analytics.Analytics
 import com.fourctech.todaylist.core.analytics.AnalyticsEvents
 import com.fourctech.todaylist.core.analytics.AnalyticsParams
 import com.fourctech.todaylist.core.analytics.toAnalyticsValue
+import com.fourctech.todaylist.core.billing.BillingRepository
+import com.fourctech.todaylist.core.billing.RestoreOutcome
 import com.fourctech.todaylist.core.notifications.NotificationScheduler
 import com.fourctech.todaylist.domain.model.AppSettings
 import com.fourctech.todaylist.domain.model.RolloverMode
@@ -16,8 +18,10 @@ import com.fourctech.todaylist.domain.repository.SettingsRepository
 import com.fourctech.todaylist.domain.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -27,6 +31,7 @@ class SettingsViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val taskRepository: TaskRepository,
     private val notificationScheduler: NotificationScheduler,
+    private val billingRepository: BillingRepository,
     private val analytics: Analytics,
 ) : ViewModel() {
 
@@ -36,6 +41,9 @@ class SettingsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = AppSettings(),
         )
+
+    private val _toastMessage = MutableStateFlow<String?>(null)
+    val toastMessage: StateFlow<String?> = _toastMessage.asStateFlow()
 
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
@@ -99,5 +107,21 @@ class SettingsViewModel @Inject constructor(
                 mapOf(AnalyticsParams.KIND to AnalyticsParams.KIND_ALL),
             )
         }
+    }
+
+    fun restorePurchases() {
+        viewModelScope.launch {
+            when (val outcome = billingRepository.restore()) {
+                RestoreOutcome.Restored -> _toastMessage.value = "Purchases restored."
+                RestoreOutcome.NothingToRestore -> {
+                    _toastMessage.value = "No purchases found for this account."
+                }
+                is RestoreOutcome.Error -> _toastMessage.value = outcome.message
+            }
+        }
+    }
+
+    fun consumeToast() {
+        _toastMessage.value = null
     }
 }

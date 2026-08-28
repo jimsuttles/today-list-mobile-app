@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.fourctech.todaylist.core.notifications.ReminderNotifications
 import com.fourctech.todaylist.widget.TodayWidgetRefresher
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
@@ -15,11 +16,23 @@ class TodayListApplication : Application() {
     @Inject
     lateinit var widgetRefresher: TodayWidgetRefresher
 
+    @Volatile
+    var adsInitialized: Boolean = false
+        private set
+
     override fun onCreate() {
         super.onCreate()
         ReminderNotifications.ensureChannel(this)
         initializeFirebase()
         widgetRefresher.start()
+    }
+
+    fun initializeAdsIfNeeded() {
+        if (adsInitialized) return
+        MobileAds.initialize(this) { status ->
+            adsInitialized = true
+            Log.d(TAG, "MobileAds initialized: ${status.adapterStatusMap.keys}")
+        }
     }
 
     private fun initializeFirebase() {

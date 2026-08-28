@@ -6,12 +6,13 @@ import com.fourctech.todaylist.core.analytics.Analytics
 import com.fourctech.todaylist.core.analytics.AnalyticsEvents
 import com.fourctech.todaylist.domain.model.CompletionRecord
 import com.fourctech.todaylist.domain.repository.HistoryRepository
+import com.fourctech.todaylist.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 data class HistoryDayGroup(
@@ -21,11 +22,13 @@ data class HistoryDayGroup(
 
 data class HistoryUiState(
     val groups: List<HistoryDayGroup> = emptyList(),
+    val adsRemoved: Boolean = false,
 )
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     historyRepository: HistoryRepository,
+    settingsRepository: SettingsRepository,
     analytics: Analytics,
 ) : ViewModel() {
 
@@ -33,14 +36,15 @@ class HistoryViewModel @Inject constructor(
         analytics.log(AnalyticsEvents.HISTORY_OPENED)
     }
 
-    val uiState: StateFlow<HistoryUiState> = historyRepository.observeHistory()
-        .map { records ->
-            val groups = records
-                .groupBy { it.completionDate }
-                .entries
-                .sortedByDescending { it.key }
-                .map { (date, items) -> HistoryDayGroup(date = date, items = items) }
-            HistoryUiState(groups = groups)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryUiState())
+    val uiState: StateFlow<HistoryUiState> = combine(
+        historyRepository.observeHistory(),
+        settingsRepository.observeSettings(),
+    ) { records, settings ->
+        val groups = records
+            .groupBy { it.completionDate }
+            .entries
+            .sortedByDescending { it.key }
+            .map { (date, items) -> HistoryDayGroup(date = date, items = items) }
+        HistoryUiState(groups = groups, adsRemoved = settings.adsRemovedCached)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryUiState())
 }
