@@ -58,7 +58,7 @@ Tasks live in **Today**, **Later**, or **History** (completion events). No accou
 
 1. Close open occurrence; write completion event (snapshot + date).
 2. **No recurrence** → status `DELETED`.
-3. **Has recurrence** → compute next date; if none, delete; else new open occurrence, task → Today, clear reminder.
+3. **Has recurrence** → compute next date; if none, delete; else new open occurrence, task stays on Today with that `scheduledDate`, clear reminder. **Today list only shows tasks due on or before today** (future next occurrences stay hidden until their day; they are also excluded from rollover “unfinished”).
 
 ### Daily rollover
 

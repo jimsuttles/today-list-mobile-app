@@ -307,7 +307,15 @@ final class SwiftDataTaskRepository: TaskRepository {
             sortBy: [SortDescriptor(\.sortOrder)]
         )
         let entities = (try? modelContext.fetch(descriptor)) ?? []
-        return entities.map { mapTask($0) }
+        let mapped = entities.map { mapTask($0) }
+        guard location == .today else { return mapped }
+        // Recurring completions schedule the next occurrence on Today with a future
+        // date; hide those until their day so Today only shows what's due now.
+        let today = CalendarHelpers.today()
+        return mapped.filter { task in
+            guard let scheduled = task.scheduledDate else { return true }
+            return CalendarHelpers.startOfDay(scheduled) <= today
+        }
     }
 
     private func mapTask(_ entity: PersistedTask) -> TaskItem {

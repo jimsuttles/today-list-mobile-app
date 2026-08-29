@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @State private var confirmClearHistory = false
     @State private var confirmDeleteAll = false
 
@@ -66,7 +66,7 @@ struct SettingsView: View {
                 }
                 Section("About") {
                     LabeledContent("Version", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
-                    Text("© \(Calendar.current.component(.year, from: Date())) 4CTech, LLC")
+                    Text("© \(String(Calendar.current.component(.year, from: Date()))) 4CTech, LLC")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }

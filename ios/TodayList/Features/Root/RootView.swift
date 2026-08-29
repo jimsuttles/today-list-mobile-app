@@ -1,40 +1,68 @@
 import SwiftUI
 
+private enum AppTab: Hashable {
+    case today, later, history, settings
+}
+
 struct RootView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @Environment(\.scenePhase) private var scenePhase
+    @State private var tab: AppTab = .today
 
     var body: some View {
-        TabView {
-            TodayView()
-                .tabItem { Label("Today", systemImage: "sun.max") }
-            LaterView()
-                .tabItem { Label("Later", systemImage: "tray") }
-            HistoryView()
-                .tabItem { Label("History", systemImage: "clock") }
-            SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape") }
-        }
-        .tint(Color.tlPrimary)
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 0) {
-                if let pending = env.pendingUndo {
-                    UndoBanner(
-                        title: pending.title,
-                        onUndo: { Task { await env.undoPending() } },
-                        onDismiss: { env.pendingUndo = nil }
-                    )
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .task(id: pending.completionEventId) {
-                        try? await Task.sleep(nanoseconds: 5_000_000_000)
-                        if env.pendingUndo?.completionEventId == pending.completionEventId {
-                            env.pendingUndo = nil
+        @Bindable var env = env
+        VStack(spacing: 0) {
+            Group {
+                switch tab {
+                case .today:
+                    TodayView()
+                case .later:
+                    LaterView()
+                case .history:
+                    HistoryView()
+                case .settings:
+                    SettingsView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if let pending = env.pendingUndo {
+                UndoBanner(
+                    title: pending.title,
+                    onUndo: {
+                        Task { @MainActor in
+                            await env.undoPending()
                         }
+                    },
+                    onDismiss: {
+                        env.pendingUndo = nil
+                    }
+                )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .task(id: pending.completionEventId) {
+                    try? await Task.sleep(nanoseconds: 6_000_000_000)
+                    if env.pendingUndo?.completionEventId == pending.completionEventId {
+                        env.pendingUndo = nil
                     }
                 }
-                AdBannerSlot(adsRemoved: env.settings.adsRemovedCached)
             }
+
+            AdBannerSlot(adsRemoved: env.settings.adsRemovedCached)
+
+            Divider()
+            HStack {
+                tabButton(.today, title: "Today", systemImage: "sun.max")
+                tabButton(.later, title: "Later", systemImage: "tray")
+                tabButton(.history, title: "History", systemImage: "clock")
+                tabButton(.settings, title: "Settings", systemImage: "gearshape")
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 8)
+            .background(Color.tlSurface.ignoresSafeArea(edges: .bottom))
         }
+        .background(Color.tlBackground.ignoresSafeArea())
+        .animation(.easeInOut(duration: 0.2), value: env.pendingUndo?.completionEventId)
+        .tint(Color.tlPrimary)
         .sheet(item: rolloverBinding) { review in
             RolloverReviewView(unfinished: review.unfinished, missedDays: review.missedDays)
         }
@@ -50,11 +78,29 @@ struct RootView: View {
             }
         }
         .onOpenURL { url in
-            // todaylist://task/{id}
             guard url.scheme == "todaylist", url.host == "task" else { return }
             let id = url.pathComponents.filter { $0 != "/" }.first ?? url.lastPathComponent
-            if !id.isEmpty { env.deepLinkTaskId = id }
+            if !id.isEmpty {
+                env.deepLinkTaskId = id
+                tab = .today
+            }
         }
+    }
+
+    private func tabButton(_ value: AppTab, title: String, systemImage: String) -> some View {
+        Button {
+            tab = value
+        } label: {
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                Text(title)
+                    .font(.caption2)
+            }
+            .frame(maxWidth: .infinity)
+            .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(tab == value ? .isSelected : [])
     }
 
     private var colorScheme: ColorScheme? {

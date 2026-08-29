@@ -18,6 +18,8 @@ final class AppEnvironment {
     var deepLinkTaskId: String?
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
+    /// Completions during this app session on Today (used for the progress label).
+    var sessionCompletedCount = 0
 
     struct UndoState: Equatable {
         let completionEventId: String
@@ -77,17 +79,20 @@ final class AppEnvironment {
     func completeTask(_ task: TaskItem) async {
         do {
             if let eventId = try await taskRepository.completeTask(taskId: task.id) {
-                await notificationScheduler.cancelReminder(taskId: task.id)
                 pendingUndo = UndoState(
                     completionEventId: eventId,
                     title: task.title,
                     restoreTo: task.location
                 )
-                historyRepository.notifyCompletionsChanged()
-                await self.refreshWidget()
+                if task.location == .today {
+                    sessionCompletedCount += 1
+                }
                 if settings.hapticsEnabled {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 }
+                historyRepository.notifyCompletionsChanged()
+                await notificationScheduler.cancelReminder(taskId: task.id)
+                await refreshWidget()
             }
         } catch {
             Analytics.log("complete_failed", parameters: ["error": error.localizedDescription])
@@ -101,6 +106,9 @@ final class AppEnvironment {
                 completionEventId: pending.completionEventId,
                 restoreTo: pending.restoreTo
             )
+            if pending.restoreTo == .today {
+                sessionCompletedCount = max(0, sessionCompletedCount - 1)
+            }
             historyRepository.notifyCompletionsChanged()
             await refreshWidget()
             pendingUndo = nil
@@ -118,15 +126,3 @@ final class AppEnvironment {
 }
 
 import UIKit
-
-private struct AppEnvironmentKey: EnvironmentKey {
-    @MainActor static let defaultValue = AppEnvironment(inMemory: true)
-}
-
-extension EnvironmentValues {
-    @MainActor
-    var appEnvironment: AppEnvironment {
-        get { self[AppEnvironmentKey.self] }
-        set { self[AppEnvironmentKey.self] = newValue }
-    }
-}

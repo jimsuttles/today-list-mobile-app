@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct TaskDetailView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     let taskId: String
 
     @State private var title = ""
@@ -12,15 +13,28 @@ struct TaskDetailView: View {
     @State private var reminderAt = Date().addingTimeInterval(3600)
     @State private var repeatOption: RepeatOption = .none
     @State private var showDeleteConfirm = false
-    @State private var loaded = false
     @State private var original: TaskItem?
+
+    private var noteLinks: [URL] {
+        LinkDetector.urls(in: notes)
+    }
 
     var body: some View {
         Form {
             Section {
                 TextField("Title", text: $title)
-                TextField("Notes", text: $notes, axis: .vertical)
-                    .lineLimit(3...6)
+            }
+            Section("Notes") {
+                TextField("Notes (URLs open in Safari)", text: $notes, axis: .vertical)
+                    .lineLimit(4...10)
+                ForEach(noteLinks, id: \.absoluteString) { url in
+                    Button {
+                        openURL(url)
+                    } label: {
+                        Label(url.absoluteString, systemImage: "safari")
+                            .lineLimit(2)
+                    }
+                }
             }
             Section("List") {
                 Picker("List", selection: $location) {
@@ -84,7 +98,6 @@ struct TaskDetailView: View {
             reminderAt = r
         }
         repeatOption = task.recurrence?.asRepeatOption ?? .none
-        loaded = true
     }
 
     private func save() async {
@@ -97,12 +110,19 @@ struct TaskDetailView: View {
         task.notes = notes.isEmpty ? nil : notes
         task.location = location
         task.reminderAt = reminderEnabled ? reminderAt : nil
-        task.recurrence = RecurrenceRule.from(option: repeatOption, startDate: task.scheduledDate ?? CalendarHelpers.today())
+        task.recurrence = RecurrenceRule.from(
+            option: repeatOption,
+            startDate: task.scheduledDate ?? CalendarHelpers.today()
+        )
         try? await env.taskRepository.updateTask(task)
         if let at = task.reminderAt {
             let granted = await env.notificationScheduler.requestPermissionIfNeeded()
             if granted {
-                await env.notificationScheduler.scheduleReminder(taskId: task.id, title: task.title, at: at)
+                await env.notificationScheduler.scheduleReminder(
+                    taskId: task.id,
+                    title: task.title,
+                    at: at
+                )
             }
             await env.settingsRepository.updateSettings { $0.notificationPermissionPrompted = true }
         } else {

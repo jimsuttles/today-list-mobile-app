@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LaterView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @State private var tasks: [TaskItem] = []
     @State private var showQuickAdd = false
     @State private var path = NavigationPath()
@@ -32,11 +32,13 @@ struct LaterView: View {
                                 .tint(Color.tlPrimary)
                             }
                             .listRowBackground(Color.tlSurface)
+                            .deleteDisabled(true)
                         }
                         .onMove(perform: move)
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
+                    .environment(\.editMode, .constant(.active))
                 }
             }
             .background(Color.tlBackground)
@@ -46,9 +48,6 @@ struct LaterView: View {
                     Button { showQuickAdd = true } label: {
                         Image(systemName: "plus")
                     }
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    if !tasks.isEmpty { EditButton() }
                 }
             }
             .navigationDestination(for: String.self) { id in

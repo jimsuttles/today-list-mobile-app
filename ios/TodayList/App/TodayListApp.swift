@@ -8,7 +8,7 @@ struct TodayListApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environment(\.appEnvironment, env)
+                .environment(env)
                 .task { await env.bootstrap() }
         }
         .modelContainer(env.modelContainer)

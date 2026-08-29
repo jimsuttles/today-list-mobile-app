@@ -84,13 +84,38 @@ final class TaskRepositoryTests: XCTestCase {
         _ = try await env.taskRepository.completeTask(taskId: task.id)
         var today: [TaskItem] = []
         for await t in env.taskRepository.observeTasks(location: .today) { today = t; break }
-        XCTAssertEqual(today.count, 1)
-        XCTAssertEqual(today.first?.id, task.id)
+        // Next occurrence is tomorrow — not due on Today yet.
+        XCTAssertTrue(today.isEmpty)
+        let updated = await env.taskRepository.getTask(id: task.id)
+        XCTAssertEqual(updated?.location, .today)
         XCTAssertEqual(
-            today.first?.scheduledDate.map { CalendarHelpers.startOfDay($0) },
+            updated?.scheduledDate.map { CalendarHelpers.startOfDay($0) },
             CalendarHelpers.addingDays(1, to: start)
         )
-        XCTAssertNil(today.first?.reminderAt)
+        XCTAssertNil(updated?.reminderAt)
+    }
+
+    func testWeekdayCompleteHidesUntilNextWeekday() async throws {
+        let start = CalendarHelpers.today()
+        let rule = RecurrenceRule(type: .weekdays, startDate: start)
+        let task = try await env.taskRepository.createTask(
+            title: "Weekday chore",
+            notes: nil,
+            location: .today,
+            reminderAt: nil,
+            scheduledDate: start,
+            recurrence: rule
+        )
+        _ = try await env.taskRepository.completeTask(taskId: task.id)
+        var today: [TaskItem] = []
+        for await t in env.taskRepository.observeTasks(location: .today) { today = t; break }
+        XCTAssertTrue(today.isEmpty)
+        let updated = await env.taskRepository.getTask(id: task.id)
+        let expectedNext = DefaultRecurrenceEngine().nextOccurrence(rule: rule, after: start)
+        XCTAssertEqual(
+            updated?.scheduledDate.map { CalendarHelpers.startOfDay($0) },
+            expectedNext.map { CalendarHelpers.startOfDay($0) }
+        )
     }
 
     func testSettingsRoundTrip() async {

@@ -1,9 +1,8 @@
 import SwiftUI
 
 struct TodayView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @State private var tasks: [TaskItem] = []
-    @State private var sessionCompleted = 0
     @State private var showQuickAdd = false
     @State private var path = NavigationPath()
 
@@ -24,29 +23,30 @@ struct TodayView: View {
                                 .foregroundStyle(Color.tlOutline)
                                 .listRowBackground(Color.clear)
                         }
-                        ForEach(tasks) { task in
-                            TaskRowView(
-                                task: task,
-                                onComplete: {
-                                    Task {
-                                        await env.completeTask(task)
-                                        sessionCompleted += 1
+                        Section {
+                            ForEach(tasks) { task in
+                                TaskRowView(
+                                    task: task,
+                                    onComplete: {
+                                        Task { await env.completeTask(task) }
+                                    },
+                                    onOpen: { path.append(task.id) }
+                                )
+                                .swipeActions(edge: .trailing) {
+                                    Button("Later") {
+                                        Task { try? await env.taskRepository.moveToLater(taskId: task.id) }
                                     }
-                                },
-                                onOpen: { path.append(task.id) }
-                            )
-                            .swipeActions(edge: .trailing) {
-                                Button("Later") {
-                                    Task { try? await env.taskRepository.moveToLater(taskId: task.id) }
+                                    .tint(Color.tlSecondary)
                                 }
-                                .tint(Color.tlSecondary)
+                                .listRowBackground(Color.tlSurface)
+                                .deleteDisabled(true)
                             }
-                            .listRowBackground(Color.tlSurface)
+                            .onMove(perform: move)
                         }
-                        .onMove(perform: move)
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
+                    .environment(\.editMode, .constant(.active))
                 }
             }
             .background(Color.tlBackground)
@@ -59,11 +59,6 @@ struct TodayView: View {
                         Image(systemName: "plus")
                     }
                     .accessibilityLabel("Add task")
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    if !tasks.isEmpty {
-                        EditButton()
-                    }
                 }
             }
             .navigationDestination(for: String.self) { id in
@@ -83,10 +78,11 @@ struct TodayView: View {
 
     private var progressLabel: String {
         let left = tasks.count
-        if sessionCompleted == 0 {
+        let done = env.sessionCompletedCount
+        if done == 0 {
             return left == 1 ? "1 left" : "\(left) left"
         }
-        return "\(sessionCompleted) done · \(left) left"
+        return "\(done) done · \(left) left"
     }
 
     private func move(from source: IndexSet, to destination: Int) {

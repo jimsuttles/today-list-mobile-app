@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RemoveAdsView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
 
     var body: some View {
         Form {

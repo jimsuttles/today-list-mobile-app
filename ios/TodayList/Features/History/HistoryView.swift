@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @State private var records: [CompletionRecord] = []
     @State private var path = NavigationPath()
 
@@ -48,7 +48,7 @@ struct HistoryView: View {
 }
 
 struct HistoryDetailView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @Environment(\.dismiss) private var dismiss
     let completionId: String
     @State private var record: CompletionRecord?

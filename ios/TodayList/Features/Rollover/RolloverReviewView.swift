@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RolloverReviewView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     let unfinished: [TaskItem]
     let missedDays: Int
     @State private var decisions: [String: TaskLocation]

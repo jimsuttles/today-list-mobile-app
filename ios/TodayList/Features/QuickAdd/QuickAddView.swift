@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct QuickAddView: View {
-    @Environment(\.appEnvironment) private var env
+    @Environment(AppEnvironment.self) private var env
     @Environment(\.dismiss) private var dismiss
 
     var defaultLocation: TaskLocation = .today

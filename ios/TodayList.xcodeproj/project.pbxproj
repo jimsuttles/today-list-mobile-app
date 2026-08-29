@@ -25,6 +25,7 @@
 		767C0B42DF30A6082F43BFBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D8244D535B1773A7C8DDA0 /* Assets.xcassets */; };
 		79E52983D470960704AAA9A9 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490B1184D693DD06C8083420 /* Enums.swift */; };
 		91FF56F171CFA83711464D8D /* LaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7FFD4A209ABE726EF0B330 /* LaterView.swift */; };
+		95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */; };
 		A107989EDFF03D00E77ACA86 /* TodayListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDDAD17E092150B1BA332E4 /* TodayListWidget.swift */; };
 		A2483F620EC4B32B7D2888F4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4336D544DDF1CF9DA91A705B /* SettingsView.swift */; };
 		A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00926601BC3A8F0ECBAE4A3A /* RecreateTaskFromHistoryUseCase.swift */; };
@@ -116,6 +117,7 @@
 		E76357F81095BECCBC8A4CB5 /* RemoveAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAdsView.swift; sourceTree = "<group>"; };
 		EAC0E6F70952F6D4FF0204FA /* SwiftDataHistoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataHistoryRepository.swift; sourceTree = "<group>"; };
 		EB63F5B9BD0ED9FA23AC37D5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkifiedNotes.swift; sourceTree = "<group>"; };
 		F252AB1286F233CC814DA4B1 /* RolloverManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverManager.swift; sourceTree = "<group>"; };
 		F8451ADC6F519AED4CF3F822 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		FD8F01F9D5B36817B79D4594 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 		94F9711C67A234C072F4DAF8 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */,
 				B168ED7AA467565C71B35E4F /* TaskRowView.swift */,
 				73B724526E617B03E142BEA0 /* UndoBanner.swift */,
 			);
@@ -572,6 +575,7 @@
 				79E52983D470960704AAA9A9 /* Enums.swift in Sources */,
 				EFC3421DFD43A2A3D75967C6 /* HistoryView.swift in Sources */,
 				91FF56F171CFA83711464D8D /* LaterView.swift in Sources */,
+				95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */,
 				51B151C6812DC7EA89EFD492 /* PersistedModels.swift in Sources */,
 				F8C690CC57CF04EEFEC093A4 /* QuickAddView.swift in Sources */,
 				A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */,
@@ -673,7 +677,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -708,10 +712,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayList/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Today List uses this identifier to show relevant ads if you have not removed ads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -734,10 +741,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TodayList/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Today List uses this identifier to show relevant ads if you have not removed ads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -833,7 +843,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

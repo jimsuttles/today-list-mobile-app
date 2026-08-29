@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.fourctech.todaylist.core.time.FakeClockProvider
 import com.fourctech.todaylist.data.local.db.TodayListDatabase
+import com.fourctech.todaylist.data.local.entity.TaskStatus
 import com.fourctech.todaylist.domain.model.TaskLocation
 import com.fourctech.todaylist.domain.recurrence.DefaultRecurrenceEngine
 import com.google.common.truth.Truth.assertThat
@@ -183,10 +184,11 @@ class RoomTaskRepositoryTest {
 
         repository.completeTask(created.id)
 
-        val today = repository.observeTodayTasks().first()
-        assertThat(today).hasSize(1)
-        assertThat(today.first().id).isEqualTo(created.id)
-        assertThat(today.first().scheduledDate).isEqualTo(clock.today().plusDays(1))
+        // Next occurrence is tomorrow — not due on Today yet.
+        assertThat(repository.observeTodayTasks().first()).isEmpty()
+        val stored = database.taskDao().getTaskById(created.id)
+        assertThat(stored?.status).isEqualTo(TaskStatus.TODAY)
+        assertThat(stored?.scheduledDate).isEqualTo(clock.today().plusDays(1))
         assertThat(database.completionEventDao().observeAll().first()).hasSize(1)
         assertThat(database.occurrenceDao().getOpenOccurrence(created.id)?.occurrenceDate)
             .isEqualTo(clock.today().plusDays(1))

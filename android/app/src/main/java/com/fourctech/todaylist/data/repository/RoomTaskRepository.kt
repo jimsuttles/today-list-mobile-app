@@ -35,7 +35,13 @@ class RoomTaskRepository @Inject constructor(
 ) : TaskRepository {
 
     override fun observeTodayTasks(): Flow<List<Task>> =
-        taskDao.observeTodayTasks().mapLatest { entities -> entities.mapNotNull { it.toDomainTask() } }
+        taskDao.observeTodayTasks().mapLatest { entities ->
+            val today = clock.today()
+            entities.mapNotNull { it.toDomainTask() }.filter { task ->
+                val scheduled = task.scheduledDate
+                scheduled == null || !scheduled.isAfter(today)
+            }
+        }
 
     override fun observeLaterTasks(): Flow<List<Task>> =
         taskDao.observeLaterTasks().mapLatest { entities -> entities.mapNotNull { it.toDomainTask() } }

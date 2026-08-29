@@ -9,7 +9,7 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "8"
 targets:
   TodayList:
     type: application
@@ -26,7 +26,11 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Today List
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_CFBundleIconName: AppIcon
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_NSUserTrackingUsageDescription: Today List uses this identifier to show relevant ads if you have not removed ads.
         CODE_SIGN_ENTITLEMENTS: TodayList/TodayList.entitlements
         CODE_SIGN_STYLE: Automatic
