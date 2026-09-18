@@ -12,7 +12,6 @@ final class AppEnvironment {
     let notificationScheduler: NotificationScheduler
     let rolloverManager: RolloverManager
     let recreateFromHistory: RecreateTaskFromHistoryUseCase
-    let billing: StoreKitBilling
 
     var settings: AppSettings
     var deepLinkTaskId: String?
@@ -59,7 +58,6 @@ final class AppEnvironment {
             historyRepository: history,
             taskRepository: tasks
         )
-        self.billing = StoreKitBilling(settingsRepository: settingsRepo)
         self.settings = settingsRepo.currentSettings()
     }
 
@@ -70,8 +68,6 @@ final class AppEnvironment {
             notificationScheduler: notificationScheduler
         )
         settings = settingsRepository.currentSettings()
-        _ = billing.listenForTransactions()
-        await billing.loadProducts()
         let outcome = await rolloverManager.evaluate()
         if case .needsReview = outcome {
             rolloverReview = outcome
