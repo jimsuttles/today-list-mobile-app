@@ -35,9 +35,13 @@ final class PhoneWatchBridge: NSObject {
     private var repository: SwiftDataTaskRepository?
     private var historyRepository: SwiftDataHistoryRepository?
     private var notificationScheduler: NotificationScheduler?
-    private var handledOperationIDs = Set<UUID>()
+    private let handledKey = "today_watch_handled_operation_ids"
+    private var handledOperationIDs: Set<UUID> = []
 
     private override init() {
+        if let values = UserDefaults.standard.stringArray(forKey: handledKey) {
+            handledOperationIDs = Set(values.compactMap(UUID.init(uuidString:)))
+        }
         super.init()
         if WCSession.isSupported() {
             WCSession.default.delegate = self
@@ -133,6 +137,7 @@ final class PhoneWatchBridge: NSObject {
             }
 
             handledOperationIDs.insert(operation.id)
+            persistHandledOperationIDs()
             acknowledge(operation.id)
             await publishCurrentSnapshot()
         } catch {
@@ -159,6 +164,11 @@ final class PhoneWatchBridge: NSObject {
 
         publishSnapshot(activeTasks: active, completedToday: completed)
         WidgetSnapshot.publish(todayTitles: active.map(\.title))
+    }
+
+    private func persistHandledOperationIDs() {
+        let recent = handledOperationIDs.map(\.uuidString).suffix(200)
+        UserDefaults.standard.set(Array(recent), forKey: handledKey)
     }
 
     private func acknowledge(_ id: UUID) {
