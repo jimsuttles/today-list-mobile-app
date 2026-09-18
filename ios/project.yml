@@ -110,7 +110,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: TodayListWatchApp/TodayListWatchApp.entitlements
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: "X6T2496428"
-        SKIP_INSTALL: NO
+        SKIP_INSTALL: YES
     dependencies:
       - target: TodayListWatchWidget
         embed: true
@@ -150,9 +150,6 @@ schemes:
     build:
       targets:
         TodayList: all
-        TodayListWidget: all
-        TodayListWatchApp: all
-        TodayListWatchWidget: all
     test:
       targets:
         - TodayListTests
