@@ -92,7 +92,7 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
   TodayListWatchApp:
-    type: application
+    type: application.watchapp2
     platform: watchOS
     sources:
       - path: TodayListWatchApp
@@ -106,6 +106,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Today List
         INFOPLIST_KEY_CFBundleIconName: AppIcon
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.fourctech.todaylist
+        INFOPLIST_KEY_WKWatchKitApp: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: TodayListWatchApp/TodayListWatchApp.entitlements
         CODE_SIGN_STYLE: Automatic
@@ -120,6 +121,7 @@ targets:
         CFBundleDisplayName: Today List
         CFBundleIconName: AppIcon
         WKCompanionAppBundleIdentifier: com.fourctech.todaylist
+        WKWatchKitApp: true
 
   TodayListWatchWidget:
     type: app-extension
