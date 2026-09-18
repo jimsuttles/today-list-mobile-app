@@ -9,7 +9,7 @@ struct AddTodayItemIntent: AppIntent {
     var task: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Add \(.$task) to Today")
+        Summary("Add \\(.$task) to Today")
     }
 
     @MainActor
@@ -41,7 +41,7 @@ struct AddLaterItemIntent: AppIntent {
     var task: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Add \(.$task) to Later")
+        Summary("Add \\(.$task) to Later")
     }
 
     @MainActor
@@ -73,7 +73,7 @@ struct CompleteItemIntent: AppIntent {
     var item: TodayTaskEntity
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Complete \(.$item)")
+        Summary("Complete \\(.$item)")
     }
 
     @MainActor
