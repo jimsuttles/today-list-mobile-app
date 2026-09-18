@@ -37,7 +37,7 @@ protocol SettingsRepository: AnyObject {
     func observeSettings() -> AsyncStream<AppSettings>
     func currentSettings() -> AppSettings
     func updateSettings(_ transform: (inout AppSettings) -> Void) async
-    func resetPreferencesKeepingEntitlement() async
+    func resetPreferences() async
 }
 
 protocol NotificationScheduler: AnyObject {
