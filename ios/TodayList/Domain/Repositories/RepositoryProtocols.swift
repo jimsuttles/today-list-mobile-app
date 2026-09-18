@@ -4,6 +4,7 @@ import Foundation
 protocol TaskRepository: AnyObject {
     func observeTasks(location: TaskLocation) -> AsyncStream<[TaskItem]>
     func getTask(id: String) async -> TaskItem?
+    func tasksScheduled(on date: Date) async -> [TaskItem]
     func createTask(
         title: String,
         notes: String?,
