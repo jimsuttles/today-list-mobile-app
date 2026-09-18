@@ -1,4 +1,5 @@
 import AppIntents
+import Foundation
 
 struct AddTodayItemIntent: AppIntent {
     static let title: LocalizedStringResource = "Add Today Item"
@@ -92,7 +93,8 @@ struct ShowTodayListIntent: AppIntent {
     static let openAppWhenRun = true
 
     func perform() async throws -> some IntentResult {
-        .result(opensIntent: OpenURLIntent(URL(string: "todaylist://v1/today")!))
+        IntentRouteRequest.store("todaylist://v1/today")
+        return .result()
     }
 }
 
@@ -102,7 +104,8 @@ struct StartEndMyDayIntent: AppIntent {
     static let openAppWhenRun = true
 
     func perform() async throws -> some IntentResult {
-        .result(opensIntent: OpenURLIntent(URL(string: "todaylist://v1/end-my-day")!))
+        IntentRouteRequest.store("todaylist://v1/end-my-day")
+        return .result()
     }
 }
 
@@ -130,7 +133,7 @@ struct TodayListShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: CompleteItemIntent(),
             phrases: [
-                "Complete a task in \\(.applicationName)"
+                "Complete a task in \(.applicationName)"
             ],
             shortTitle: "Complete Item",
             systemImageName: "checkmark.circle"
