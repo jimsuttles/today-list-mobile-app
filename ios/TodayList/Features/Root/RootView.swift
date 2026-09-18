@@ -47,8 +47,6 @@ struct RootView: View {
                 }
             }
 
-            AdBannerSlot(adsRemoved: env.settings.adsRemovedCached)
-
             Divider()
             HStack {
                 tabButton(.today, title: "Today", systemImage: "sun.max")
