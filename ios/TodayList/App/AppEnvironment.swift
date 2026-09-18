@@ -64,6 +64,11 @@ final class AppEnvironment {
     }
 
     func bootstrap() async {
+        PhoneWatchBridge.shared.configure(
+            repository: taskRepository,
+            historyRepository: historyRepository,
+            notificationScheduler: notificationScheduler
+        )
         settings = settingsRepository.currentSettings()
         _ = billing.listenForTransactions()
         await billing.loadProducts()
@@ -120,10 +125,25 @@ final class AppEnvironment {
     }
 
     func refreshWidget() async {
+        var activeTasks: [TaskItem] = []
         for await tasks in taskRepository.observeTasks(location: .today) {
+            activeTasks = tasks
             WidgetSnapshot.publish(todayTitles: tasks.map(\.title))
             break
         }
+
+        var completedToday: [CompletionRecord] = []
+        for await records in historyRepository.observeCompletions() {
+            completedToday = records.filter {
+                Calendar.current.isDate($0.completionDate, inSameDayAs: Date())
+            }
+            break
+        }
+
+        PhoneWatchBridge.shared.publishSnapshot(
+            activeTasks: activeTasks,
+            completedToday: completedToday
+        )
     }
 }
 
