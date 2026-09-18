@@ -11,7 +11,6 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         static let rolloverMode = "rollover_mode"
         static let weekStart = "week_start"
         static let hapticsEnabled = "haptics_enabled"
-        static let adsRemovedCached = "ads_removed_cached"
         static let lastRolloverDate = "last_rollover_date"
         static let notificationPermissionPrompted = "notification_permission_prompted"
     }
@@ -48,10 +47,8 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         for c in continuations.values { c.yield(cached) }
     }
 
-    func resetPreferencesKeepingEntitlement() async {
-        let ads = cached.adsRemovedCached
+    func resetPreferences() async {
         cached = AppSettings()
-        cached.adsRemovedCached = ads
         Self.save(cached, to: defaults)
         for c in continuations.values { c.yield(cached) }
     }
@@ -70,7 +67,6 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         if defaults.object(forKey: Keys.hapticsEnabled) != nil {
             s.hapticsEnabled = defaults.bool(forKey: Keys.hapticsEnabled)
         }
-        s.adsRemovedCached = defaults.bool(forKey: Keys.adsRemovedCached)
         if let iso = defaults.string(forKey: Keys.lastRolloverDate) {
             s.lastRolloverDate = ISO8601DateFormatter.dateOnly.date(from: iso)
         }
@@ -83,7 +79,6 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         defaults.set(settings.rolloverMode.rawValue, forKey: Keys.rolloverMode)
         defaults.set(settings.weekStart.rawValue, forKey: Keys.weekStart)
         defaults.set(settings.hapticsEnabled, forKey: Keys.hapticsEnabled)
-        defaults.set(settings.adsRemovedCached, forKey: Keys.adsRemovedCached)
         if let d = settings.lastRolloverDate {
             defaults.set(ISO8601DateFormatter.dateOnly.string(from: CalendarHelpers.startOfDay(d)), forKey: Keys.lastRolloverDate)
         } else {
