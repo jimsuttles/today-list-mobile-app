@@ -40,6 +40,22 @@ final class SwiftDataTaskRepository: TaskRepository {
         return mapTask(entity)
     }
 
+    func tasksScheduled(on date: Date) async -> [TaskItem] {
+        let day = CalendarHelpers.startOfDay(date)
+        let status = TaskStatus.today.rawValue
+        let descriptor = FetchDescriptor<PersistedTask>(
+            predicate: #Predicate { $0.statusRaw == status },
+            sortBy: [SortDescriptor(\.sortOrder)]
+        )
+        let entities = (try? modelContext.fetch(descriptor)) ?? []
+        return entities
+            .map { mapTask($0) }
+            .filter { task in
+                guard let scheduled = task.scheduledDate else { return false }
+                return CalendarHelpers.startOfDay(scheduled) == day
+            }
+    }
+
     func createTask(
         title: String,
         notes: String?,
