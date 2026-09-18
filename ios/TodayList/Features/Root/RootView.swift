@@ -67,8 +67,12 @@ struct RootView: View {
             RolloverReviewView(unfinished: review.unfinished, missedDays: review.missedDays)
         }
         .preferredColorScheme(colorScheme)
+        .onAppear {
+            consumePendingIntentRoute()
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                consumePendingIntentRoute()
                 Task {
                     let outcome = await env.rolloverManager.evaluate()
                     if case .needsReview = outcome {
@@ -79,6 +83,12 @@ struct RootView: View {
         }
         .onOpenURL { url in
             guard let route = TodayListRoute(url: url) else { return }
+            handle(route)
+        }
+    }
+
+    private func consumePendingIntentRoute() {
+        if let route = IntentRouteRequest.consume() {
             handle(route)
         }
     }
