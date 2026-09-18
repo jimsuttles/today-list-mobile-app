@@ -16,6 +16,8 @@ final class AppEnvironment {
 
     var settings: AppSettings
     var deepLinkTaskId: String?
+    var requestedQuickAddLocation: TaskLocation?
+    var endMyDayRequested = false
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
     /// Completions during this app session on Today (used for the progress label).
