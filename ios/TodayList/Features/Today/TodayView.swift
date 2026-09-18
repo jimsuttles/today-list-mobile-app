@@ -4,6 +4,8 @@ struct TodayView: View {
     @Environment(AppEnvironment.self) private var env
     @State private var tasks: [TaskItem] = []
     @State private var showQuickAdd = false
+    @State private var quickAddLocation: TaskLocation = .today
+    @State private var showEndMyDay = false
     @State private var path = NavigationPath()
 
     var body: some View {
@@ -52,8 +54,16 @@ struct TodayView: View {
             .background(Color.tlBackground)
             .navigationTitle("Today")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
+                        showEndMyDay = true
+                    } label: {
+                        Image(systemName: "moon.stars")
+                    }
+                    .accessibilityLabel("End My Day")
+
+                    Button {
+                        quickAddLocation = .today
                         showQuickAdd = true
                     } label: {
                         Image(systemName: "plus")
@@ -65,13 +75,27 @@ struct TodayView: View {
                 TaskDetailView(taskId: id)
             }
             .sheet(isPresented: $showQuickAdd) {
-                QuickAddView(defaultLocation: .today)
+                QuickAddView(defaultLocation: quickAddLocation)
+            }
+            .sheet(isPresented: $showEndMyDay) {
+                EndMyDayView()
             }
             .task {
                 for await list in env.taskRepository.observeTasks(location: .today) {
                     tasks = list
                     WidgetSnapshot.publish(todayTitles: list.map(\.title))
                 }
+            }
+            .onChange(of: env.requestedQuickAddLocation) { _, location in
+                guard let location else { return }
+                quickAddLocation = location
+                showQuickAdd = true
+                env.requestedQuickAddLocation = nil
+            }
+            .onChange(of: env.endMyDayRequested) { _, requested in
+                guard requested else { return }
+                showEndMyDay = true
+                env.endMyDayRequested = false
             }
         }
     }
