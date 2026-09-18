@@ -63,6 +63,29 @@ struct AddLaterItemIntent: AppIntent {
     }
 }
 
+
+struct CompleteItemIntent: AppIntent {
+    static let title: LocalizedStringResource = "Complete Item"
+    static let description = IntentDescription("Complete an active Today List task.")
+
+    @Parameter(title: "Task")
+    var item: TodayTaskEntity
+
+    static var parameterSummary: some ParameterSummary {
+        Summary("Complete \(.$item)")
+    }
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        let env = AppEnvironment()
+        guard let task = await env.taskRepository.getTask(id: item.id) else {
+            return .result(dialog: "That task is no longer available.")
+        }
+        await env.completeTask(task)
+        return .result(dialog: "Completed \(task.title).")
+    }
+}
+
 struct ShowTodayListIntent: AppIntent {
     static let title: LocalizedStringResource = "Show Today List"
     static let description = IntentDescription("Open Today List on today's tasks.")
@@ -102,6 +125,15 @@ struct TodayListShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Add Later Item",
             systemImageName: "tray"
+        )
+
+        AppShortcut(
+            intent: CompleteItemIntent(),
+            phrases: [
+                "Complete a task in \\(.applicationName)"
+            ],
+            shortTitle: "Complete Item",
+            systemImageName: "checkmark.circle"
         )
 
         AppShortcut(
