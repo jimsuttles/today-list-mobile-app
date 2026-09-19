@@ -47,8 +47,6 @@ struct RootView: View {
                 }
             }
 
-            AdBannerSlot(adsRemoved: env.settings.adsRemovedCached)
-
             Divider()
             HStack {
                 tabButton(.today, title: "Today", systemImage: "sun.max")
@@ -67,8 +65,12 @@ struct RootView: View {
             RolloverReviewView(unfinished: review.unfinished, missedDays: review.missedDays)
         }
         .preferredColorScheme(colorScheme)
+        .onAppear {
+            consumePendingIntentRoute()
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                consumePendingIntentRoute()
                 Task {
                     let outcome = await env.rolloverManager.evaluate()
                     if case .needsReview = outcome {
@@ -78,12 +80,32 @@ struct RootView: View {
             }
         }
         .onOpenURL { url in
-            guard url.scheme == "todaylist", url.host == "task" else { return }
-            let id = url.pathComponents.filter { $0 != "/" }.first ?? url.lastPathComponent
-            if !id.isEmpty {
-                env.deepLinkTaskId = id
-                tab = .today
-            }
+            guard let route = TodayListRoute(url: url) else { return }
+            handle(route)
+        }
+    }
+
+    private func consumePendingIntentRoute() {
+        if let route = IntentRouteRequest.consume() {
+            handle(route)
+        }
+    }
+
+    private func handle(_ route: TodayListRoute) {
+        switch route {
+        case .today:
+            tab = .today
+        case .later:
+            tab = .later
+        case .add(let location):
+            tab = location == .today ? .today : .later
+            env.requestedQuickAddLocation = location
+        case .endMyDay:
+            tab = .today
+            env.endMyDayRequested = true
+        case .task(let id):
+            env.deepLinkTaskId = id
+            tab = .today
         }
     }
 

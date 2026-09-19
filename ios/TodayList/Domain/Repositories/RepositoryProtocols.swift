@@ -4,6 +4,7 @@ import Foundation
 protocol TaskRepository: AnyObject {
     func observeTasks(location: TaskLocation) -> AsyncStream<[TaskItem]>
     func getTask(id: String) async -> TaskItem?
+    func tasksScheduled(on date: Date) async -> [TaskItem]
     func createTask(
         title: String,
         notes: String?,
@@ -36,7 +37,7 @@ protocol SettingsRepository: AnyObject {
     func observeSettings() -> AsyncStream<AppSettings>
     func currentSettings() -> AppSettings
     func updateSettings(_ transform: (inout AppSettings) -> Void) async
-    func resetPreferencesKeepingEntitlement() async
+    func resetPreferences() async
 }
 
 protocol NotificationScheduler: AnyObject {

@@ -23,7 +23,6 @@ struct TodayProvider: TimelineProvider {
     }
 
     private func loadEntry() -> TodayEntry {
-        // Widget reads App Group UserDefaults snapshot written by the app.
         let defaults = UserDefaults(suiteName: "group.com.fourctech.todaylist")
         let titles = defaults?.stringArray(forKey: "today_titles") ?? []
         return TodayEntry(date: Date(), titles: Array(titles.prefix(5)), count: titles.count)
@@ -32,29 +31,65 @@ struct TodayProvider: TimelineProvider {
 
 struct TodayListWidgetEntryView: View {
     var entry: TodayEntry
-    @Environment(\.widgetFamily) var family
+    @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("Today")
-                    .font(.headline)
-                    .foregroundStyle(Color(red: 0x1B/255, green: 0x4F/255, blue: 0x72/255))
-                Spacer()
-                Text(entry.count == 0 ? "You're clear" : "\(entry.count) left")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            if family != .systemSmall {
-                ForEach(entry.titles, id: \.self) { title in
-                    Text("○  \(title)")
-                        .font(.subheadline)
-                        .lineLimit(1)
+        Group {
+            switch family {
+            case .accessoryCircular:
+                ZStack {
+                    AccessoryWidgetBackground()
+                    VStack(spacing: 0) {
+                        Text("\(entry.count)")
+                            .font(.headline)
+                        Text("left")
+                            .font(.caption2)
+                    }
+                }
+            case .accessoryRectangular:
+                VStack(alignment: .leading, spacing: 2) {
+                    Label("Today", systemImage: "sun.max")
+                        .font(.headline)
+                    Text(entry.count == 0 ? "You're clear" : "\(entry.count) remaining")
+                        .font(.caption)
+                }
+            case .systemSmall:
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("Today", systemImage: "sun.max")
+                        .font(.headline)
+                    Spacer()
+                    Text(entry.count == 0 ? "You're clear" : "\(entry.count)")
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                    Text(entry.count == 1 ? "task remaining" : "tasks remaining")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            default:
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Today")
+                            .font(.headline)
+                        Spacer()
+                        Text(entry.count == 0 ? "You're clear" : "\(entry.count) left")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if entry.titles.isEmpty {
+                        Text("Nothing left for today.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(entry.titles.prefix(5), id: \.self) { title in
+                            Text("○  \(title)")
+                                .font(.subheadline)
+                                .lineLimit(1)
+                        }
+                    }
+                    Spacer(minLength: 0)
                 }
             }
-            Spacer(minLength: 0)
         }
-        .padding()
+        .widgetURL(URL(string: "todaylist://v1/today"))
         .containerBackground(for: .widget) {
             Color(red: 0xEE/255, green: 0xF4/255, blue: 0xF8/255)
         }
@@ -70,7 +105,12 @@ struct TodayListWidget: Widget {
             TodayListWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Today")
-        .description("See what's on your Today list.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .description("See what's left on your Today list.")
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .accessoryCircular,
+            .accessoryRectangular
+        ])
     }
 }

@@ -55,7 +55,6 @@ struct AppSettings: Equatable, Sendable {
     var rolloverMode: RolloverMode = .ask
     var weekStart: WeekStart = .sunday
     var hapticsEnabled: Bool = true
-    var adsRemovedCached: Bool = false
     var lastRolloverDate: Date? = nil
     var notificationPermissionPrompted: Bool = false
 }

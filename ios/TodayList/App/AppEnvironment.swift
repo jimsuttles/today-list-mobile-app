@@ -12,10 +12,11 @@ final class AppEnvironment {
     let notificationScheduler: NotificationScheduler
     let rolloverManager: RolloverManager
     let recreateFromHistory: RecreateTaskFromHistoryUseCase
-    let billing: StoreKitBilling
 
     var settings: AppSettings
     var deepLinkTaskId: String?
+    var requestedQuickAddLocation: TaskLocation?
+    var endMyDayRequested = false
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
     /// Completions during this app session on Today (used for the progress label).
@@ -57,14 +58,16 @@ final class AppEnvironment {
             historyRepository: history,
             taskRepository: tasks
         )
-        self.billing = StoreKitBilling(settingsRepository: settingsRepo)
         self.settings = settingsRepo.currentSettings()
     }
 
     func bootstrap() async {
+        PhoneWatchBridge.shared.configure(
+            repository: taskRepository,
+            historyRepository: historyRepository,
+            notificationScheduler: notificationScheduler
+        )
         settings = settingsRepository.currentSettings()
-        _ = billing.listenForTransactions()
-        await billing.loadProducts()
         let outcome = await rolloverManager.evaluate()
         if case .needsReview = outcome {
             rolloverReview = outcome
@@ -118,10 +121,25 @@ final class AppEnvironment {
     }
 
     func refreshWidget() async {
+        var activeTasks: [TaskItem] = []
         for await tasks in taskRepository.observeTasks(location: .today) {
+            activeTasks = tasks
             WidgetSnapshot.publish(todayTitles: tasks.map(\.title))
             break
         }
+
+        var completedToday: [CompletionRecord] = []
+        for await records in historyRepository.observeCompletions() {
+            completedToday = records.filter {
+                Calendar.current.isDate($0.completionDate, inSameDayAs: Date())
+            }
+            break
+        }
+
+        PhoneWatchBridge.shared.publishSnapshot(
+            activeTasks: activeTasks,
+            completedToday: completedToday
+        )
     }
 }
 

@@ -40,18 +40,6 @@ struct SettingsView: View {
                 Section("Experience") {
                     Toggle("Haptics", isOn: hapticsBinding)
                 }
-                Section("Premium") {
-                    if env.settings.adsRemovedCached {
-                        Label("Ads removed", systemImage: "checkmark.seal.fill")
-                    } else {
-                        NavigationLink("Remove Ads") {
-                            RemoveAdsView()
-                        }
-                    }
-                    Button("Restore purchases") {
-                        Task { await env.billing.restorePurchases() }
-                    }
-                }
                 Section("Data") {
                     Button("Clear History…", role: .destructive) { confirmClearHistory = true }
                     Button("Delete All App Data…", role: .destructive) { confirmDeleteAll = true }
@@ -82,7 +70,7 @@ struct SettingsView: View {
                 Button("Delete All", role: .destructive) {
                     Task {
                         try? await env.taskRepository.deleteAllTasks()
-                        await env.settingsRepository.resetPreferencesKeepingEntitlement()
+                        await env.settingsRepository.resetPreferences()
                     }
                 }
                 Button("Cancel", role: .cancel) {}
