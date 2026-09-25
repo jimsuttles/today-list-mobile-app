@@ -83,6 +83,7 @@ final class AppEnvironment {
     func importSuiteHandoff(id: UUID) async -> TaskLocation? {
         let key = "suite.handoff.processed.\(id.uuidString)"
         if UserDefaults.standard.bool(forKey: key) {
+            try? SuiteHandoffStore.markCompleted(id: id)
             return nil
         }
 
