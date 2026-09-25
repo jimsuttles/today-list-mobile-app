@@ -105,7 +105,7 @@ final class AppEnvironment {
                 recurrence: nil
             )
             UserDefaults.standard.set(true, forKey: key)
-            try SuiteHandoffStore.markCompleted(id: id)
+            try? SuiteHandoffStore.markCompleted(id: id)
             await refreshWidget()
             return location
         } catch {
