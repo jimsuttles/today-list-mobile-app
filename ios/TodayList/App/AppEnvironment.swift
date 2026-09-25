@@ -19,6 +19,7 @@ final class AppEnvironment {
     var endMyDayRequested = false
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
+    var suiteHandoffError: String?
     /// Completions during this app session on Today (used for the progress label).
     var sessionCompletedCount = 0
 
@@ -76,6 +77,40 @@ final class AppEnvironment {
             for await s in settingsRepository.observeSettings() {
                 await MainActor.run { self.settings = s }
             }
+        }
+    }
+
+    func importSuiteHandoff(id: UUID) async -> TaskLocation? {
+        let key = "suite.handoff.processed.\(id.uuidString)"
+        if UserDefaults.standard.bool(forKey: key) {
+            return nil
+        }
+
+        do {
+            let payload = try SuiteHandoffStore.loadPending(id: id)
+            guard payload.version == 1 else { throw SuiteHandoffError.unsupportedVersion }
+            guard payload.sourceApp == "quickCapture",
+                  payload.destinationApp == "todayList",
+                  !payload.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw SuiteHandoffError.invalidPayload
+            }
+
+            let location: TaskLocation = payload.metadata["destination"] == "later" ? .later : .today
+            _ = try await taskRepository.createTask(
+                title: payload.title,
+                notes: payload.notes,
+                location: location,
+                reminderAt: nil,
+                scheduledDate: location == .today ? CalendarHelpers.today() : nil,
+                recurrence: nil
+            )
+            UserDefaults.standard.set(true, forKey: key)
+            try SuiteHandoffStore.markCompleted(id: id)
+            await refreshWidget()
+            return location
+        } catch {
+            suiteHandoffError = error.localizedDescription
+            return nil
         }
     }
 
