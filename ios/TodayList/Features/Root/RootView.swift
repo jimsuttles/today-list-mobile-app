@@ -139,6 +139,7 @@ struct RootView: View {
             .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("tab-\(title.lowercased())")
         .accessibilityAddTraits(tab == value ? .isSelected : [])
     }
 
