@@ -4,6 +4,7 @@ enum TodayListRoute: Equatable {
     case today
     case later
     case add(TaskLocation)
+    case handoff(UUID)
     case endMyDay
     case task(String)
 
@@ -19,7 +20,8 @@ enum TodayListRoute: Equatable {
         }
 
         guard url.host?.lowercased() == "v1" else { return nil }
-        let component = url.pathComponents.first(where: { $0 != "/" })?.lowercased()
+        let parts = url.pathComponents.filter { $0 != "/" }
+        guard let component = parts.first?.lowercased() else { return nil }
 
         switch component {
         case "today":
@@ -33,6 +35,9 @@ enum TodayListRoute: Equatable {
                 .value?
                 .lowercased()
             self = .add(destination == "later" ? .later : .today)
+        case "handoff":
+            guard parts.count > 1, let id = UUID(uuidString: parts[1]) else { return nil }
+            self = .handoff(id)
         case "end-my-day":
             self = .endMyDay
         default:

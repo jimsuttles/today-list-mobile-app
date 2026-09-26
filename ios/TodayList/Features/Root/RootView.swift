@@ -64,6 +64,17 @@ struct RootView: View {
         .sheet(item: rolloverBinding) { review in
             RolloverReviewView(unfinished: review.unfinished, missedDays: review.missedDays)
         }
+        .alert(
+            "Could Not Add Suite Item",
+            isPresented: Binding(
+                get: { env.suiteHandoffError != nil },
+                set: { if !$0 { env.suiteHandoffError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { env.suiteHandoffError = nil }
+        } message: {
+            Text(env.suiteHandoffError ?? "")
+        }
         .preferredColorScheme(colorScheme)
         .onAppear {
             consumePendingIntentRoute()
@@ -100,6 +111,12 @@ struct RootView: View {
         case .add(let location):
             tab = location == .today ? .today : .later
             env.requestedQuickAddLocation = location
+        case .handoff(let id):
+            Task { @MainActor in
+                if let location = await env.importSuiteHandoff(id: id) {
+                    tab = location == .today ? .today : .later
+                }
+            }
         case .endMyDay:
             tab = .today
             env.endMyDayRequested = true
