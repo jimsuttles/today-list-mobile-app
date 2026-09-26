@@ -30,6 +30,7 @@ struct TaskRowView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("task-\(task.title)")
         }
         .padding(.vertical, 6)
     }
