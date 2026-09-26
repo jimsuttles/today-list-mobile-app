@@ -69,6 +69,9 @@ final class AppEnvironment {
             notificationScheduler: notificationScheduler
         )
         settings = settingsRepository.currentSettings()
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotDemo") {
+            await seedScreenshotDemo()
+        }
         let outcome = await rolloverManager.evaluate()
         if case .needsReview = outcome {
             rolloverReview = outcome
@@ -77,6 +80,75 @@ final class AppEnvironment {
             for await s in settingsRepository.observeSettings() {
                 await MainActor.run { self.settings = s }
             }
+        }
+    }
+
+    /// Populates deterministic demo content for App Store simulator screenshots.
+    func seedScreenshotDemo() async {
+        try? await taskRepository.deleteAllTasks()
+        await settingsRepository.updateSettings {
+            $0.lastRolloverDate = CalendarHelpers.today()
+            $0.themeMode = .light
+            $0.rolloverMode = .ask
+            $0.hapticsEnabled = false
+        }
+        settings = settingsRepository.currentSettings()
+
+        do {
+            let finished = try await taskRepository.createTask(
+                title: "Morning stretch",
+                notes: nil,
+                location: .today,
+                reminderAt: nil,
+                scheduledDate: CalendarHelpers.today(),
+                recurrence: nil
+            )
+            _ = try await taskRepository.completeTask(taskId: finished.id)
+            sessionCompletedCount = 1
+
+            _ = try await taskRepository.createTask(
+                title: "Buy groceries",
+                notes: "Milk, eggs, sourdough",
+                location: .today,
+                reminderAt: nil,
+                scheduledDate: CalendarHelpers.today(),
+                recurrence: nil
+            )
+            _ = try await taskRepository.createTask(
+                title: "Call dentist",
+                notes: nil,
+                location: .today,
+                reminderAt: nil,
+                scheduledDate: CalendarHelpers.today(),
+                recurrence: nil
+            )
+            _ = try await taskRepository.createTask(
+                title: "Review budget",
+                notes: "https://www.4ctech.io/today-list/",
+                location: .today,
+                reminderAt: nil,
+                scheduledDate: CalendarHelpers.today(),
+                recurrence: RecurrenceRule.from(option: .weekdays)
+            )
+            _ = try await taskRepository.createTask(
+                title: "Plan weekend trip",
+                notes: "Look at train times",
+                location: .later,
+                reminderAt: nil,
+                scheduledDate: nil,
+                recurrence: nil
+            )
+            _ = try await taskRepository.createTask(
+                title: "Read design notes",
+                notes: nil,
+                location: .later,
+                reminderAt: nil,
+                scheduledDate: nil,
+                recurrence: nil
+            )
+            historyRepository.notifyCompletionsChanged()
+        } catch {
+            Analytics.log("screenshot_seed_failed", parameters: ["error": error.localizedDescription])
         }
     }
 
