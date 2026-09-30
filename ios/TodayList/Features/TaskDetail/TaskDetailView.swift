@@ -13,6 +13,8 @@ struct TaskDetailView: View {
     @State private var reminderAt = Date().addingTimeInterval(3600)
     @State private var repeatOption: RepeatOption = .none
     @State private var showDeleteConfirm = false
+    @State private var promotionError: String?
+    @State private var isPromoting = false
     @State private var original: TaskItem?
 
     private var noteLinks: [URL] {
@@ -56,6 +58,14 @@ struct TaskDetailView: View {
                     }
                 }
             }
+            Section("Actions") {
+                Button {
+                    Task { await promoteToTop3() }
+                } label: {
+                    Label("Promote to Top 3", systemImage: "arrow.up.forward.app")
+                }
+                .disabled(isPromoting || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
+            }
             Section {
                 Button("Delete…", role: .destructive) {
                     showDeleteConfirm = true
@@ -80,6 +90,11 @@ struct TaskDetailView: View {
                 }
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .alert("Could Not Promote Task", isPresented: promotionErrorBinding) {
+            Button("OK", role: .cancel) { promotionError = nil }
+        } message: {
+            Text(promotionError ?? "")
         }
         .task { await load() }
     }
@@ -131,9 +146,49 @@ struct TaskDetailView: View {
         dismiss()
     }
 
+    private func promoteToTop3() async {
+        guard !isPromoting else { return }
+        isPromoting = true
+        defer { isPromoting = false }
+
+        guard let task = await env.taskRepository.getTask(id: taskId),
+              !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            promotionError = "This task needs a title before it can be promoted."
+            return
+        }
+
+        let payload = SuiteHandoffStore.top3Payload(for: task)
+        do {
+            try SuiteHandoffStore.writePending(payload)
+        } catch let error as SuiteHandoffError {
+            promotionError = error.localizedDescription
+            return
+        } catch {
+            promotionError = "Top 3 promotion could not be prepared. Your Today List task was not changed."
+            return
+        }
+
+        let accepted = await withCheckedContinuation { continuation in
+            openURL(SuiteHandoffStore.top3URL(for: payload.id)) { accepted in
+                continuation.resume(returning: accepted)
+            }
+        }
+        guard accepted else {
+            promotionError = "Top 3 could not be opened. Your Today List task was not changed."
+            return
+        }
+    }
+
     private func delete(_ scope: DeleteScope) async {
         await env.notificationScheduler.cancelReminder(taskId: taskId)
         try? await env.taskRepository.deleteTask(taskId: taskId, scope: scope)
         dismiss()
+    }
+
+    private var promotionErrorBinding: Binding<Bool> {
+        Binding(
+            get: { promotionError != nil },
+            set: { if !$0 { promotionError = nil } }
+        )
     }
 }
