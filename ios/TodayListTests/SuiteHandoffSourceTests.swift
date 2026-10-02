@@ -1,14 +1,17 @@
 import Foundation
+import ProductivitySuiteCore
 import Testing
 @testable import TodayList
 
 struct SuiteHandoffSourceTests {
     @Test
-    func handoffIDIsStableForTheSameTask() {
-        #expect(
-            SuiteHandoffStore.top3HandoffID(sourceTaskID: "task-123")
-                == SuiteHandoffStore.top3HandoffID(sourceTaskID: "task-123")
+    func handoffIDIsExactlyCompatibleWithTheExistingAlgorithm() throws {
+        let id = SuiteHandoffStore.top3HandoffID(sourceTaskID: "task-123")
+        let expected = try #require(
+            UUID(uuidString: "3F6E0ED9-4EDF-5869-A989-254AF5979C30")
         )
+
+        #expect(id == expected)
     }
 
     @Test
@@ -26,9 +29,9 @@ struct SuiteHandoffSourceTests {
 
         let payload = SuiteHandoffStore.top3Payload(for: task, createdAt: createdAt)
 
-        #expect(payload.version == 1)
-        #expect(payload.sourceApp == "todaylist")
-        #expect(payload.destinationApp == "top3")
+        #expect(payload.version == SuiteHandoffConstants.schemaVersion)
+        #expect(payload.sourceApp == .todayList)
+        #expect(payload.destinationApp == .top3)
         #expect(payload.createdAt == createdAt)
         #expect(payload.title == task.title)
         #expect(payload.notes == task.notes)

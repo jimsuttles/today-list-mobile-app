@@ -35,12 +35,14 @@
 		905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */; };
 		91FF56F171CFA83711464D8D /* LaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7FFD4A209ABE726EF0B330 /* LaterView.swift */; };
 		95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */; };
+		98DBCED8B4FB461F414B7472 /* ProductivitySuiteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 44C00B1FD7926F07E505AB3C /* ProductivitySuiteCore */; };
 		9AD72B57BC41EE5E74859F85 /* TodayListWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A107989EDFF03D00E77ACA86 /* TodayListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDDAD17E092150B1BA332E4 /* TodayListWidget.swift */; };
 		A2483F620EC4B32B7D2888F4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4336D544DDF1CF9DA91A705B /* SettingsView.swift */; };
 		A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00926601BC3A8F0ECBAE4A3A /* RecreateTaskFromHistoryUseCase.swift */; };
 		A38B1774C80DFB4456F5FFF0 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8F01F9D5B36817B79D4594 /* TodayView.swift */; };
 		A41B662A17C3BA4834FF5D7D /* TodayListWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C061B1567F0DAEF1D51F298 /* TodayListWatchApp.swift */; };
+		BBE9C99FD73C95BC809B087B /* ProductivitySuiteCore in Frameworks */ = {isa = PBXBuildFile; productRef = FE9B35C47A89ED7A0C5C7A19 /* ProductivitySuiteCore */; };
 		BE98B91F9E67D2A469A6FC2C /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168ED7AA467565C71B35E4F /* TaskRowView.swift */; };
 		BF956639A02AE06D01FB3C83 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB63F5B9BD0ED9FA23AC37D5 /* RootView.swift */; };
 		C212326BEECDA61F82C0CE7A /* UserDefaultsSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2841CFCDDA9D1DB6FABA7B7B /* UserDefaultsSettingsRepository.swift */; };
@@ -188,6 +190,25 @@
 		F8451ADC6F519AED4CF3F822 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		FD8F01F9D5B36817B79D4594 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		08C647E11B0C3524C99359D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BBE9C99FD73C95BC809B087B /* ProductivitySuiteCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE503139383EF765C6F458C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98DBCED8B4FB461F414B7472 /* ProductivitySuiteCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0209F0333CE5A58AAA6EE7ED /* TodayList */ = {
@@ -622,6 +643,7 @@
 			buildConfigurationList = 5CCDEB32C204B1A5523D0ED8 /* Build configuration list for PBXNativeTarget "TodayListTests" */;
 			buildPhases = (
 				BDBBFC1935900DACC4CA5CBD /* Sources */,
+				08C647E11B0C3524C99359D8 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -630,6 +652,7 @@
 			);
 			name = TodayListTests;
 			packageProductDependencies = (
+				FE9B35C47A89ED7A0C5C7A19 /* ProductivitySuiteCore */,
 			);
 			productName = TodayListTests;
 			productReference = B738135F0A6B27832C47739E /* TodayListTests.xctest */;
@@ -641,6 +664,7 @@
 			buildPhases = (
 				3576FAD8A1D849499DCDBBE0 /* Sources */,
 				B312FD751BC66285A9D49C48 /* Resources */,
+				EE503139383EF765C6F458C7 /* Frameworks */,
 				790DBBDEFD9E2BB7B0D35EDC /* Embed Foundation Extensions */,
 				425F8C19604105B6D5483C82 /* Embed Watch Content */,
 			);
@@ -652,6 +676,7 @@
 			);
 			name = TodayList;
 			packageProductDependencies = (
+				44C00B1FD7926F07E505AB3C /* ProductivitySuiteCore */,
 			);
 			productName = TodayList;
 			productReference = 82CAE2C398AF0778201DB2B6 /* TodayList.app */;
@@ -693,6 +718,9 @@
 			);
 			mainGroup = 0FF359F5CC4A5C764E4480EA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BCC365A4A3E48C28F9CBB651 /* XCRemoteSwiftPackageReference "productivity-suite-core" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 98577BF45EB4417894115B85 /* Products */;
 			projectDirPath = "";
@@ -1222,6 +1250,30 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BCC365A4A3E48C28F9CBB651 /* XCRemoteSwiftPackageReference "productivity-suite-core" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jimsuttles/productivity-suite-core.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		44C00B1FD7926F07E505AB3C /* ProductivitySuiteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BCC365A4A3E48C28F9CBB651 /* XCRemoteSwiftPackageReference "productivity-suite-core" */;
+			productName = ProductivitySuiteCore;
+		};
+		FE9B35C47A89ED7A0C5C7A19 /* ProductivitySuiteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BCC365A4A3E48C28F9CBB651 /* XCRemoteSwiftPackageReference "productivity-suite-core" */;
+			productName = ProductivitySuiteCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FEE29F4DBFD8D4E5516A9B1F /* Project object */;
 }
