@@ -1,0 +1,15 @@
+{
+  "originHash" : "ef680d2376eaed6653322c34b267e2c995bd7e58aa2c22f363ac8fa5141fddaa",
+  "pins" : [
+    {
+      "identity" : "productivity-suite-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jimsuttles/productivity-suite-core.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3a3fbd7f62f32d8698c78e6cae6569f85887e6fd"
+      }
+    }
+  ],
+  "version" : 3
+}

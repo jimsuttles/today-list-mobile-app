@@ -1,4 +1,5 @@
 import Foundation
+import ProductivitySuiteCore
 import SwiftData
 import SwiftUI
 
@@ -161,9 +162,11 @@ final class AppEnvironment {
 
         do {
             let payload = try SuiteHandoffStore.loadPending(id: id)
-            guard payload.version == 1 else { throw SuiteHandoffError.unsupportedVersion }
-            guard payload.sourceApp == "quickCapture",
-                  payload.destinationApp == "todayList",
+            guard payload.version == SuiteHandoffConstants.schemaVersion else {
+                throw SuiteHandoffError.unsupportedVersion
+            }
+            guard payload.sourceApp == .quickCapture,
+                  payload.destinationApp == .todayList,
                   !payload.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 throw SuiteHandoffError.invalidPayload
             }

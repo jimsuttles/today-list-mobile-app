@@ -11,6 +11,10 @@ settings:
     SWIFT_VERSION: "5.0"
     MARKETING_VERSION: "1.1"
     CURRENT_PROJECT_VERSION: "12"
+packages:
+  ProductivitySuiteCore:
+    url: https://github.com/jimsuttles/productivity-suite-core.git
+    branch: main
 targets:
   TodayList:
     type: application
@@ -38,6 +42,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
     dependencies:
+      - package: ProductivitySuiteCore
       - target: TodayListWidget
       - target: TodayListWatchApp
         embed: true
@@ -61,6 +66,7 @@ targets:
       - TodayListTests
     dependencies:
       - target: TodayList
+      - package: ProductivitySuiteCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fourctech.todaylist.tests
