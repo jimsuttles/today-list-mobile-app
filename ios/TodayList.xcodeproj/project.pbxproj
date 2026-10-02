@@ -7,12 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02ECD3C9A565190034C0E95F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FEB122F8CD1458385955A8D /* Assets.xcassets */; };
+		03D763642303210A4F8A7C5A /* TodayListWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3F4144AE275733F6736964 /* TodayListWatchWidget.swift */; };
 		0926A46DA1BF21FF87C14C44 /* TodayListApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F4F071D9AC45CBA9571AE7 /* TodayListApp.swift */; };
 		09EB98FBEDC216E64EEBA23B /* TodayListWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 92A4642E8F7C8E4899798638 /* TodayListWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		191ED223606230AD05C0269C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8451ADC6F519AED4CF3F822 /* AppEnvironment.swift */; };
+		19458B0F4D70BA84A0CCC798 /* IntentRouteRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1033D0BDF7D29CC49EF102 /* IntentRouteRequest.swift */; };
+		1CADC04D58D91BAE613BEDC3 /* EndMyDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99E22C9C8193AFB2D594DF6 /* EndMyDayView.swift */; };
 		1D4F4807B7070CB5F72417DB /* CalendarHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB9FB8E94E46C9E860D15BB /* CalendarHelpers.swift */; };
+		21CABB96064B6E346F7F2C13 /* TodayListRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */; };
+		25EA04DC1193A31545AD0844 /* WatchTodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76592598A6B876A2EBA07CC2 /* WatchTodayView.swift */; };
 		2FBA1C2D83D81E685F75DBE9 /* RecurrenceEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14154A856BAAA9946B5FD6D /* RecurrenceEngineTests.swift */; };
 		30A5C9B1456B52FDF71CE024 /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA60EF397671B688B7AF0C /* DomainModels.swift */; };
+		3908080528F7C97203835B75 /* SuiteHandoffStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7A57F3D65DC75A616A432D /* SuiteHandoffStore.swift */; };
 		464541D4A8E37E2F0A26D996 /* AnalyticsStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4002A9785311377D370FF /* AnalyticsStub.swift */; };
 		4779A872B0A2257C5E8DBC29 /* RolloverManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CFFACD09A50F38FB1DBC77 /* RolloverManagerTests.swift */; };
 		51B151C6812DC7EA89EFD492 /* PersistedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412DEDCDA4FD2A931FD0FEA3 /* PersistedModels.swift */; };
@@ -20,20 +27,24 @@
 		5C68AAA3270C0489B68B8F4E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CCE3332C3F266D49DBA2AC /* Theme.swift */; };
 		62FB4A40DFF8BE475A28C3BF /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E76F108A22589688ECF77C /* TaskDetailView.swift */; };
 		69A23BEE89DFE37820BABB9D /* UndoBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B724526E617B03E142BEA0 /* UndoBanner.swift */; };
-		69A83B5C95E8D4C01190FF84 /* StoreKitBilling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EFE27193B5BDC7B62A1DD1 /* StoreKitBilling.swift */; };
 		6D74C71006508B4F1716CF4B /* RecurrenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0126D512EAE517BB5D52E07 /* RecurrenceEngine.swift */; };
 		767C0B42DF30A6082F43BFBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D8244D535B1773A7C8DDA0 /* Assets.xcassets */; };
 		79E52983D470960704AAA9A9 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490B1184D693DD06C8083420 /* Enums.swift */; };
+		8405F0B573BACFC3577EFCCA /* TodayTaskEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1883280738381B06BA6FFE39 /* TodayTaskEntity.swift */; };
+		8F6DBA00B8D5F5CF223694C2 /* PhoneWatchBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5A20D265AA514A9263D96 /* PhoneWatchBridge.swift */; };
+		905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */; };
 		91FF56F171CFA83711464D8D /* LaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7FFD4A209ABE726EF0B330 /* LaterView.swift */; };
 		95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */; };
+		9AD72B57BC41EE5E74859F85 /* TodayListWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A107989EDFF03D00E77ACA86 /* TodayListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDDAD17E092150B1BA332E4 /* TodayListWidget.swift */; };
 		A2483F620EC4B32B7D2888F4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4336D544DDF1CF9DA91A705B /* SettingsView.swift */; };
 		A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00926601BC3A8F0ECBAE4A3A /* RecreateTaskFromHistoryUseCase.swift */; };
 		A38B1774C80DFB4456F5FFF0 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8F01F9D5B36817B79D4594 /* TodayView.swift */; };
+		A41B662A17C3BA4834FF5D7D /* TodayListWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C061B1567F0DAEF1D51F298 /* TodayListWatchApp.swift */; };
 		BE98B91F9E67D2A469A6FC2C /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168ED7AA467565C71B35E4F /* TaskRowView.swift */; };
 		BF956639A02AE06D01FB3C83 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB63F5B9BD0ED9FA23AC37D5 /* RootView.swift */; };
-		BF95A9BF0286F4DD4587330F /* AdsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1119C9E0314605D94F29BF40 /* AdsSupport.swift */; };
 		C212326BEECDA61F82C0CE7A /* UserDefaultsSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2841CFCDDA9D1DB6FABA7B7B /* UserDefaultsSettingsRepository.swift */; };
+		C968DAED72FC6BD438DFE8E5 /* TodayListWatchWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6F722429FDFC35F905130187 /* TodayListWatchWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CBE51A8CFD42AA26D5906FA7 /* SwiftDataHistoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC0E6F70952F6D4FF0204FA /* SwiftDataHistoryRepository.swift */; };
 		CBF182247CDA32136ABD6EF6 /* RepositoryProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708CA5FFFB8738AAD3525B38 /* RepositoryProtocols.swift */; };
 		D07D3805043940B4D310D21C /* TaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */; };
@@ -41,10 +52,13 @@
 		D90EE06F1D3C0E8EF5D74215 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E8C237B502787FCC1B1C477 /* Assets.xcassets */; };
 		DD0D6519E044554B8C897B31 /* RolloverManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F252AB1286F233CC814DA4B1 /* RolloverManager.swift */; };
 		E36D5FA6127ACBBB09BCBE91 /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A177BD22190631476BCE4A8B /* SwiftDataTaskRepository.swift */; };
-		E8A7CD21F0654771AA5A6257 /* RemoveAdsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76357F81095BECCBC8A4CB5 /* RemoveAdsView.swift */; };
 		EAAC1D75C5851BBA0D1B8C9D /* UserNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8A925534D1041C92612B25 /* UserNotificationScheduler.swift */; };
 		EFC3421DFD43A2A3D75967C6 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52105C1B95025114C0BF681 /* HistoryView.swift */; };
+		F4A42C673E5F795E0555F1F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A2C15AB1073B2F2870D5A /* Assets.xcassets */; };
+		F72DB1A563D9085D17C90E4E /* TodayListAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972463491450D0796113574B /* TodayListAppIntents.swift */; };
+		F82B1F7EAFCE595997752A31 /* WatchTodayStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453441D590B3E22A60BF32C0 /* WatchTodayStore.swift */; };
 		F8C690CC57CF04EEFEC093A4 /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC57BDDFB45EE1C2CAB05FC /* QuickAddView.swift */; };
+		FB3671A341780A8BCBA01D52 /* TodayListRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834932FC2CF80324AE5BF804 /* TodayListRoute.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +69,13 @@
 			remoteGlobalIDString = 374D7EB878C3009902CAF025;
 			remoteInfo = TodayListWidget;
 		};
+		A276771EEDFFC8EC1BD127C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEE29F4DBFD8D4E5516A9B1F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 39D45D057F9C77806FF64EC5;
+			remoteInfo = TodayListWatchApp;
+		};
 		CA90333CC8610A3300F7D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FEE29F4DBFD8D4E5516A9B1F /* Project object */;
@@ -62,9 +83,27 @@
 			remoteGlobalIDString = D5190E5F856881272CF1FEFD;
 			remoteInfo = TodayList;
 		};
+		E1C583B63E98461B6FC9A4F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FEE29F4DBFD8D4E5516A9B1F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1FC2890D69F386B5B02885B;
+			remoteInfo = TodayListWatchWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		425F8C19604105B6D5483C82 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				9AD72B57BC41EE5E74859F85 /* TodayListWatchApp.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		790DBBDEFD9E2BB7B0D35EDC /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -76,45 +115,72 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FF0CC5ECFBB9DD0D7239BDDE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C968DAED72FC6BD438DFE8E5 /* TodayListWatchWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00926601BC3A8F0ECBAE4A3A /* RecreateTaskFromHistoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecreateTaskFromHistoryUseCase.swift; sourceTree = "<group>"; };
 		02CCE3332C3F266D49DBA2AC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		03802F725D2136DE56C36DC6 /* TodayList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayList.entitlements; sourceTree = "<group>"; };
-		1119C9E0314605D94F29BF40 /* AdsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsSupport.swift; sourceTree = "<group>"; };
 		11E76F108A22589688ECF77C /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		1883280738381B06BA6FFE39 /* TodayTaskEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTaskEntity.swift; sourceTree = "<group>"; };
 		2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepositoryTests.swift; sourceTree = "<group>"; };
 		2841CFCDDA9D1DB6FABA7B7B /* UserDefaultsSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSettingsRepository.swift; sourceTree = "<group>"; };
+		2C061B1567F0DAEF1D51F298 /* TodayListWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListWatchApp.swift; sourceTree = "<group>"; };
+		2C7A57F3D65DC75A616A432D /* SuiteHandoffStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteHandoffStore.swift; sourceTree = "<group>"; };
 		3DC57BDDFB45EE1C2CAB05FC /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
 		412DEDCDA4FD2A931FD0FEA3 /* PersistedModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedModels.swift; sourceTree = "<group>"; };
 		4336D544DDF1CF9DA91A705B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		453441D590B3E22A60BF32C0 /* WatchTodayStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTodayStore.swift; sourceTree = "<group>"; };
 		490B1184D693DD06C8083420 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		4FEB122F8CD1458385955A8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53E4002A9785311377D370FF /* AnalyticsStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsStub.swift; sourceTree = "<group>"; };
+		5E4A2C15AB1073B2F2870D5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E8C237B502787FCC1B1C477 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63CFFACD09A50F38FB1DBC77 /* RolloverManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverManagerTests.swift; sourceTree = "<group>"; };
+		6F722429FDFC35F905130187 /* TodayListWatchWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TodayListWatchWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F7E22A9853F711A2AD73DA3 /* TodayListWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayListWidget.entitlements; sourceTree = "<group>"; };
 		708CA5FFFB8738AAD3525B38 /* RepositoryProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryProtocols.swift; sourceTree = "<group>"; };
 		72AA60EF397671B688B7AF0C /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
 		73B724526E617B03E142BEA0 /* UndoBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoBanner.swift; sourceTree = "<group>"; };
+		76592598A6B876A2EBA07CC2 /* WatchTodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTodayView.swift; sourceTree = "<group>"; };
 		7A7FFD4A209ABE726EF0B330 /* LaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaterView.swift; sourceTree = "<group>"; };
 		7BB85226709533A185529E30 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshot.swift; sourceTree = "<group>"; };
 		7EB9FB8E94E46C9E860D15BB /* CalendarHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHelpers.swift; sourceTree = "<group>"; };
 		82CAE2C398AF0778201DB2B6 /* TodayList.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TodayList.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		834932FC2CF80324AE5BF804 /* TodayListRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListRoute.swift; sourceTree = "<group>"; };
 		83D8244D535B1773A7C8DDA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8B1033D0BDF7D29CC49EF102 /* IntentRouteRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentRouteRequest.swift; sourceTree = "<group>"; };
 		8BDDAD17E092150B1BA332E4 /* TodayListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListWidget.swift; sourceTree = "<group>"; };
 		92A4642E8F7C8E4899798638 /* TodayListWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TodayListWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		972463491450D0796113574B /* TodayListAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListAppIntents.swift; sourceTree = "<group>"; };
 		99C425BC309192A9F0FE1AB6 /* RolloverReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverReviewView.swift; sourceTree = "<group>"; };
 		9C8A925534D1041C92612B25 /* UserNotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationScheduler.swift; sourceTree = "<group>"; };
 		A177BD22190631476BCE4A8B /* SwiftDataTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepository.swift; sourceTree = "<group>"; };
 		A1F4F071D9AC45CBA9571AE7 /* TodayListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListApp.swift; sourceTree = "<group>"; };
+		A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteHandoffSourceTests.swift; sourceTree = "<group>"; };
 		A52105C1B95025114C0BF681 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		A8EFE27193B5BDC7B62A1DD1 /* StoreKitBilling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitBilling.swift; sourceTree = "<group>"; };
 		B168ED7AA467565C71B35E4F /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		B738135F0A6B27832C47739E /* TodayListTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TodayListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF294B2EF319AFCE8AD6B4C1 /* TodayListWatchApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayListWatchApp.entitlements; sourceTree = "<group>"; };
+		C589028864CEC19DF2087E83 /* TodayListWatchWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayListWatchWidget.entitlements; sourceTree = "<group>"; };
+		C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayListWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListRouteTests.swift; sourceTree = "<group>"; };
+		CB3F4144AE275733F6736964 /* TodayListWatchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListWatchWidget.swift; sourceTree = "<group>"; };
+		CFD5A20D265AA514A9263D96 /* PhoneWatchBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneWatchBridge.swift; sourceTree = "<group>"; };
 		D0126D512EAE517BB5D52E07 /* RecurrenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngine.swift; sourceTree = "<group>"; };
 		D14154A856BAAA9946B5FD6D /* RecurrenceEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngineTests.swift; sourceTree = "<group>"; };
-		E76357F81095BECCBC8A4CB5 /* RemoveAdsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAdsView.swift; sourceTree = "<group>"; };
+		D99E22C9C8193AFB2D594DF6 /* EndMyDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndMyDayView.swift; sourceTree = "<group>"; };
 		EAC0E6F70952F6D4FF0204FA /* SwiftDataHistoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataHistoryRepository.swift; sourceTree = "<group>"; };
 		EB63F5B9BD0ED9FA23AC37D5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkifiedNotes.swift; sourceTree = "<group>"; };
@@ -132,6 +198,7 @@
 				17A0FDE5B6BE2B67B3F03827 /* Domain */,
 				9C2C54BFD4B51D20D304DFCA /* Features */,
 				1EB51DD7851D12B3EB822E39 /* Infrastructure */,
+				C053C6DEFDCA11A2A715D29F /* Integrations */,
 				6900EED38DE1AB8E1DC0FCBB /* Theme */,
 				5E8C237B502787FCC1B1C477 /* Assets.xcassets */,
 				03802F725D2136DE56C36DC6 /* TodayList.entitlements */,
@@ -152,6 +219,8 @@
 			children = (
 				0209F0333CE5A58AAA6EE7ED /* TodayList */,
 				9D89A675DD7323A4DF158691 /* TodayListTests */,
+				F7E27F6E18AC9060A94E5945 /* TodayListWatchApp */,
+				62BCC4D1C014BBC4312BC0CB /* TodayListWatchWidget */,
 				B2ADFACF3E61C06B3EF6DB9A /* TodayListWidget */,
 				98577BF45EB4417894115B85 /* Products */,
 			);
@@ -180,9 +249,7 @@
 		1EB51DD7851D12B3EB822E39 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
-				98E27D7708EB966686914B8C /* Ads */,
 				D180251C73ACDBDBED36D743 /* Analytics */,
-				34CAA1BBEDE3F43319649BA3 /* Billing */,
 				B05086A9D24836D180734120 /* Notifications */,
 				EDC19BC8E425BB8E6F357F05 /* Time */,
 			);
@@ -197,12 +264,12 @@
 			path = Repositories;
 			sourceTree = "<group>";
 		};
-		34CAA1BBEDE3F43319649BA3 /* Billing */ = {
+		333E3CF719D6CAD564482ACB /* SuiteHandoff */ = {
 			isa = PBXGroup;
 			children = (
-				A8EFE27193B5BDC7B62A1DD1 /* StoreKitBilling.swift */,
+				2C7A57F3D65DC75A616A432D /* SuiteHandoffStore.swift */,
 			);
-			path = Billing;
+			path = SuiteHandoff;
 			sourceTree = "<group>";
 		};
 		4F5CD6DFEE1729F6435E83AE /* Root */ = {
@@ -219,6 +286,16 @@
 				FD8F01F9D5B36817B79D4594 /* TodayView.swift */,
 			);
 			path = Today;
+			sourceTree = "<group>";
+		};
+		62BCC4D1C014BBC4312BC0CB /* TodayListWatchWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5E4A2C15AB1073B2F2870D5A /* Assets.xcassets */,
+				C589028864CEC19DF2087E83 /* TodayListWatchWidget.entitlements */,
+				CB3F4144AE275733F6736964 /* TodayListWatchWidget.swift */,
+			);
+			path = TodayListWatchWidget;
 			sourceTree = "<group>";
 		};
 		6900EED38DE1AB8E1DC0FCBB /* Theme */ = {
@@ -261,6 +338,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		7E02EACBCC457D43D3FBC6E9 /* EndMyDay */ = {
+			isa = PBXGroup;
+			children = (
+				D99E22C9C8193AFB2D594DF6 /* EndMyDayView.swift */,
+			);
+			path = EndMyDay;
+			sourceTree = "<group>";
+		};
 		846F6C99286ACEEB76DAD6B0 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,12 +355,22 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		87E603654B73FED69E6DB423 /* Premium */ = {
+		898375476516D472733D0436 /* AppIntents */ = {
 			isa = PBXGroup;
 			children = (
-				E76357F81095BECCBC8A4CB5 /* RemoveAdsView.swift */,
+				8B1033D0BDF7D29CC49EF102 /* IntentRouteRequest.swift */,
+				972463491450D0796113574B /* TodayListAppIntents.swift */,
+				1883280738381B06BA6FFE39 /* TodayTaskEntity.swift */,
 			);
-			path = Premium;
+			path = AppIntents;
+			sourceTree = "<group>";
+		};
+		91149F88868C2362B2745DA3 /* DeepLinks */ = {
+			isa = PBXGroup;
+			children = (
+				834932FC2CF80324AE5BF804 /* TodayListRoute.swift */,
+			);
+			path = DeepLinks;
 			sourceTree = "<group>";
 		};
 		94F9711C67A234C072F4DAF8 /* Components */ = {
@@ -301,26 +396,20 @@
 			children = (
 				82CAE2C398AF0778201DB2B6 /* TodayList.app */,
 				B738135F0A6B27832C47739E /* TodayListTests.xctest */,
+				C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */,
+				6F722429FDFC35F905130187 /* TodayListWatchWidget.appex */,
 				92A4642E8F7C8E4899798638 /* TodayListWidget.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		98E27D7708EB966686914B8C /* Ads */ = {
-			isa = PBXGroup;
-			children = (
-				1119C9E0314605D94F29BF40 /* AdsSupport.swift */,
-			);
-			path = Ads;
 			sourceTree = "<group>";
 		};
 		9C2C54BFD4B51D20D304DFCA /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				94F9711C67A234C072F4DAF8 /* Components */,
+				7E02EACBCC457D43D3FBC6E9 /* EndMyDay */,
 				0A401E2041C28AD04CC769EE /* History */,
 				F21A062F830973EA3FB972C7 /* Later */,
-				87E603654B73FED69E6DB423 /* Premium */,
 				C37E820790F50E928A185B71 /* QuickAdd */,
 				1124A4E3A576DAD1F1E4EE30 /* Rollover */,
 				4F5CD6DFEE1729F6435E83AE /* Root */,
@@ -336,7 +425,9 @@
 			children = (
 				D14154A856BAAA9946B5FD6D /* RecurrenceEngineTests.swift */,
 				63CFFACD09A50F38FB1DBC77 /* RolloverManagerTests.swift */,
+				A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */,
 				2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */,
+				CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */,
 			);
 			path = TodayListTests;
 			sourceTree = "<group>";
@@ -376,6 +467,14 @@
 			path = TodayListWidget;
 			sourceTree = "<group>";
 		};
+		B7D7586681BAABE8A89C0242 /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				CFD5A20D265AA514A9263D96 /* PhoneWatchBridge.swift */,
+			);
+			path = Watch;
+			sourceTree = "<group>";
+		};
 		BA70E8418C5144C904D592E0 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,6 +491,17 @@
 				96DB1F5B94069B696A9DC726 /* SwiftData */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		C053C6DEFDCA11A2A715D29F /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				898375476516D472733D0436 /* AppIntents */,
+				91149F88868C2362B2745DA3 /* DeepLinks */,
+				333E3CF719D6CAD564482ACB /* SuiteHandoff */,
+				B7D7586681BAABE8A89C0242 /* Watch */,
+			);
+			path = Integrations;
 			sourceTree = "<group>";
 		};
 		C37E820790F50E928A185B71 /* QuickAdd */ = {
@@ -436,6 +546,18 @@
 			path = Later;
 			sourceTree = "<group>";
 		};
+		F7E27F6E18AC9060A94E5945 /* TodayListWatchApp */ = {
+			isa = PBXGroup;
+			children = (
+				4FEB122F8CD1458385955A8D /* Assets.xcassets */,
+				BF294B2EF319AFCE8AD6B4C1 /* TodayListWatchApp.entitlements */,
+				2C061B1567F0DAEF1D51F298 /* TodayListWatchApp.swift */,
+				453441D590B3E22A60BF32C0 /* WatchTodayStore.swift */,
+				76592598A6B876A2EBA07CC2 /* WatchTodayView.swift */,
+			);
+			path = TodayListWatchApp;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -455,6 +577,44 @@
 			);
 			productName = TodayListWidget;
 			productReference = 92A4642E8F7C8E4899798638 /* TodayListWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		39D45D057F9C77806FF64EC5 /* TodayListWatchApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB3FBFEDDEDAC86119EA86E2 /* Build configuration list for PBXNativeTarget "TodayListWatchApp" */;
+			buildPhases = (
+				809BFD6FEA79EFE1C2401C0A /* Sources */,
+				A252056742655C260A25159C /* Resources */,
+				FF0CC5ECFBB9DD0D7239BDDE /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B04F1EF67E790166BEBAC98B /* PBXTargetDependency */,
+			);
+			name = TodayListWatchApp;
+			packageProductDependencies = (
+			);
+			productName = TodayListWatchApp;
+			productReference = C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B1FC2890D69F386B5B02885B /* TodayListWatchWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83724F844976B36AF16C4418 /* Build configuration list for PBXNativeTarget "TodayListWatchWidget" */;
+			buildPhases = (
+				5DE343F196E5D8E9C79B23A5 /* Sources */,
+				74967AD8DF8593071A020128 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TodayListWatchWidget;
+			packageProductDependencies = (
+			);
+			productName = TodayListWatchWidget;
+			productReference = 6F722429FDFC35F905130187 /* TodayListWatchWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		CEEA653636464657AB8917D4 /* TodayListTests */ = {
@@ -482,11 +642,13 @@
 				3576FAD8A1D849499DCDBBE0 /* Sources */,
 				B312FD751BC66285A9D49C48 /* Resources */,
 				790DBBDEFD9E2BB7B0D35EDC /* Embed Foundation Extensions */,
+				425F8C19604105B6D5483C82 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				05A21A8A69D8D97FB0F3DA05 /* PBXTargetDependency */,
+				99232EB8AC6E6F54D4A5242D /* PBXTargetDependency */,
 			);
 			name = TodayList;
 			packageProductDependencies = (
@@ -505,6 +667,14 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					374D7EB878C3009902CAF025 = {
+						DevelopmentTeam = X6T2496428;
+						ProvisioningStyle = Automatic;
+					};
+					39D45D057F9C77806FF64EC5 = {
+						DevelopmentTeam = X6T2496428;
+						ProvisioningStyle = Automatic;
+					};
+					B1FC2890D69F386B5B02885B = {
 						DevelopmentTeam = X6T2496428;
 						ProvisioningStyle = Automatic;
 					};
@@ -531,11 +701,29 @@
 				D5190E5F856881272CF1FEFD /* TodayList */,
 				CEEA653636464657AB8917D4 /* TodayListTests */,
 				374D7EB878C3009902CAF025 /* TodayListWidget */,
+				39D45D057F9C77806FF64EC5 /* TodayListWatchApp */,
+				B1FC2890D69F386B5B02885B /* TodayListWatchWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		74967AD8DF8593071A020128 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4A42C673E5F795E0555F1F3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A252056742655C260A25159C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02ECD3C9A565190034C0E95F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B312FD751BC66285A9D49C48 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -567,37 +755,59 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF95A9BF0286F4DD4587330F /* AdsSupport.swift in Sources */,
 				464541D4A8E37E2F0A26D996 /* AnalyticsStub.swift in Sources */,
 				191ED223606230AD05C0269C /* AppEnvironment.swift in Sources */,
 				1D4F4807B7070CB5F72417DB /* CalendarHelpers.swift in Sources */,
 				30A5C9B1456B52FDF71CE024 /* DomainModels.swift in Sources */,
+				1CADC04D58D91BAE613BEDC3 /* EndMyDayView.swift in Sources */,
 				79E52983D470960704AAA9A9 /* Enums.swift in Sources */,
 				EFC3421DFD43A2A3D75967C6 /* HistoryView.swift in Sources */,
+				19458B0F4D70BA84A0CCC798 /* IntentRouteRequest.swift in Sources */,
 				91FF56F171CFA83711464D8D /* LaterView.swift in Sources */,
 				95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */,
 				51B151C6812DC7EA89EFD492 /* PersistedModels.swift in Sources */,
+				8F6DBA00B8D5F5CF223694C2 /* PhoneWatchBridge.swift in Sources */,
 				F8C690CC57CF04EEFEC093A4 /* QuickAddView.swift in Sources */,
 				A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */,
 				6D74C71006508B4F1716CF4B /* RecurrenceEngine.swift in Sources */,
-				E8A7CD21F0654771AA5A6257 /* RemoveAdsView.swift in Sources */,
 				CBF182247CDA32136ABD6EF6 /* RepositoryProtocols.swift in Sources */,
 				DD0D6519E044554B8C897B31 /* RolloverManager.swift in Sources */,
 				D73ED515802767BA8A85EAB2 /* RolloverReviewView.swift in Sources */,
 				BF956639A02AE06D01FB3C83 /* RootView.swift in Sources */,
 				A2483F620EC4B32B7D2888F4 /* SettingsView.swift in Sources */,
-				69A83B5C95E8D4C01190FF84 /* StoreKitBilling.swift in Sources */,
+				3908080528F7C97203835B75 /* SuiteHandoffStore.swift in Sources */,
 				CBE51A8CFD42AA26D5906FA7 /* SwiftDataHistoryRepository.swift in Sources */,
 				E36D5FA6127ACBBB09BCBE91 /* SwiftDataTaskRepository.swift in Sources */,
 				62FB4A40DFF8BE475A28C3BF /* TaskDetailView.swift in Sources */,
 				BE98B91F9E67D2A469A6FC2C /* TaskRowView.swift in Sources */,
 				5C68AAA3270C0489B68B8F4E /* Theme.swift in Sources */,
 				0926A46DA1BF21FF87C14C44 /* TodayListApp.swift in Sources */,
+				F72DB1A563D9085D17C90E4E /* TodayListAppIntents.swift in Sources */,
+				FB3671A341780A8BCBA01D52 /* TodayListRoute.swift in Sources */,
+				8405F0B573BACFC3577EFCCA /* TodayTaskEntity.swift in Sources */,
 				A38B1774C80DFB4456F5FFF0 /* TodayView.swift in Sources */,
 				69A23BEE89DFE37820BABB9D /* UndoBanner.swift in Sources */,
 				C212326BEECDA61F82C0CE7A /* UserDefaultsSettingsRepository.swift in Sources */,
 				EAAC1D75C5851BBA0D1B8C9D /* UserNotificationScheduler.swift in Sources */,
 				5446935281C9EDD5A2EA08C3 /* WidgetSnapshot.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DE343F196E5D8E9C79B23A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D763642303210A4F8A7C5A /* TodayListWatchWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		809BFD6FEA79EFE1C2401C0A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A41B662A17C3BA4834FF5D7D /* TodayListWatchApp.swift in Sources */,
+				F82B1F7EAFCE595997752A31 /* WatchTodayStore.swift in Sources */,
+				25EA04DC1193A31545AD0844 /* WatchTodayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,7 +817,9 @@
 			files = (
 				2FBA1C2D83D81E685F75DBE9 /* RecurrenceEngineTests.swift in Sources */,
 				4779A872B0A2257C5E8DBC29 /* RolloverManagerTests.swift in Sources */,
+				905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */,
 				D07D3805043940B4D310D21C /* TaskRepositoryTests.swift in Sources */,
+				21CABB96064B6E346F7F2C13 /* TodayListRouteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,6 +835,16 @@
 			isa = PBXTargetDependency;
 			target = D5190E5F856881272CF1FEFD /* TodayList */;
 			targetProxy = CA90333CC8610A3300F7D108 /* PBXContainerItemProxy */;
+		};
+		99232EB8AC6E6F54D4A5242D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 39D45D057F9C77806FF64EC5 /* TodayListWatchApp */;
+			targetProxy = A276771EEDFFC8EC1BD127C1 /* PBXContainerItemProxy */;
+		};
+		B04F1EF67E790166BEBAC98B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1FC2890D69F386B5B02885B /* TodayListWatchWidget */;
+			targetProxy = E1C583B63E98461B6FC9A4F5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -642,6 +864,38 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		1F9673D83E3503CC7804BCD3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TodayListWatchWidget/TodayListWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X6T2496428;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TodayListWatchWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fourctech.todaylist.watchkitapp.widgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		1FCCA95F3836CD375F65D129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TodayListWatchWidget/TodayListWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X6T2496428;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TodayListWatchWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fourctech.todaylist.watchkitapp.widgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
 		};
 		54FB40B8848E1C076E8467E4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -677,7 +931,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 12;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -690,14 +944,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -714,7 +968,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Today List uses this identifier to show relevant ads if you have not removed ads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -727,6 +980,44 @@
 				SDKROOT = iphoneos;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5584B3F7722A71974687DC71 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TodayListWatchApp/TodayListWatchApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X6T2496428;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TodayListWatchApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.fourctech.todaylist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fourctech.todaylist.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		86A4B09B82FC945160F08774 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TodayListWatchApp/TodayListWatchApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X6T2496428;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TodayListWatchApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.fourctech.todaylist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fourctech.todaylist.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
 		};
@@ -743,7 +1034,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Today List";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Today List uses this identifier to show relevant ads if you have not removed ads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -843,7 +1133,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 12;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -862,15 +1152,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -900,6 +1190,24 @@
 			buildConfigurations = (
 				9F063788E724A414B0665E31 /* Debug */,
 				BB3C586D383A84E77C49EDB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		83724F844976B36AF16C4418 /* Build configuration list for PBXNativeTarget "TodayListWatchWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1F9673D83E3503CC7804BCD3 /* Debug */,
+				1FCCA95F3836CD375F65D129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BB3FBFEDDEDAC86119EA86E2 /* Build configuration list for PBXNativeTarget "TodayListWatchApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5584B3F7722A71974687DC71 /* Debug */,
+				86A4B09B82FC945160F08774 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

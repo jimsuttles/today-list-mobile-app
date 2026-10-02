@@ -4,7 +4,7 @@ import XCTest
 final class TodayListRouteTests: XCTestCase {
     func testParsesSuiteHandoffRoute() {
         let id = UUID()
-        let url = URL(string: "todaylist://v1/handoff/(id.uuidString)")!
+        let url = URL(string: "todaylist://v1/handoff/\(id.uuidString)")!
 
         XCTAssertEqual(TodayListRoute(url: url), .handoff(id))
     }
