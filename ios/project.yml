@@ -71,6 +71,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fourctech.todaylist.tests
         GENERATE_INFOPLIST_FILE: YES
+        DEVELOPMENT_TEAM: "X6T2496428"
 
   TodayListWidget:
     type: app-extension
