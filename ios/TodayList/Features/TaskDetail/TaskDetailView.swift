@@ -15,6 +15,7 @@ struct TaskDetailView: View {
     @State private var showDeleteConfirm = false
     @State private var promotionError: String?
     @State private var isPromoting = false
+    @State private var isMovingToWaitingFor = false
     @State private var original: TaskItem?
 
     private var noteLinks: [URL] {
@@ -65,6 +66,13 @@ struct TaskDetailView: View {
                     Label("Promote to Top 3", systemImage: "arrow.up.forward.app")
                 }
                 .disabled(isPromoting || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
+
+                Button {
+                    Task { await moveToWaitingFor() }
+                } label: {
+                    Label("Move to Waiting For", systemImage: "person.crop.circle.badge.clock")
+                }
+                .disabled(isMovingToWaitingFor || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
             }
             Section {
                 Button("Delete…", role: .destructive) {
@@ -175,6 +183,41 @@ struct TaskDetailView: View {
         }
         guard accepted else {
             promotionError = "Top 3 could not be opened. Your Today List task was not changed."
+            return
+        }
+    }
+
+    private func moveToWaitingFor() async {
+        guard !isMovingToWaitingFor else { return }
+        isMovingToWaitingFor = true
+        defer { isMovingToWaitingFor = false }
+
+        guard let task = await env.taskRepository.getTask(id: taskId),
+              !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            promotionError = "This task needs a title before it can be moved to Waiting For."
+            return
+        }
+
+        let payload = SuiteHandoffStore.waitingForPayload(for: task)
+        do {
+            try SuiteHandoffStore.writePending(payload)
+            WaitingForSourceDispositionStore().recordPending(
+                handoffID: payload.id,
+                sourceTaskID: task.id
+            )
+        } catch {
+            promotionError = "Waiting For handoff could not be prepared. Your Today List task was not changed."
+            return
+        }
+
+        let accepted = await withCheckedContinuation { continuation in
+            openURL(SuiteHandoffStore.waitingForURL(for: payload.id)) { accepted in
+                continuation.resume(returning: accepted)
+            }
+        }
+
+        guard accepted else {
+            promotionError = "Waiting For could not be opened. Your Today List task was not changed."
             return
         }
     }
