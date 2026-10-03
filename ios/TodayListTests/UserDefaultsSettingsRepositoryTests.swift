@@ -2,6 +2,7 @@ import Foundation
 import XCTest
 @testable import TodayList
 
+@MainActor
 final class UserDefaultsSettingsRepositoryTests: XCTestCase {
     func testRolloverDateRoundTripsAsSameLocalCalendarDay() {
         var calendar = Calendar(identifier: .gregorian)
