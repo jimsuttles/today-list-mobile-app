@@ -67,11 +67,43 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         if defaults.object(forKey: Keys.hapticsEnabled) != nil {
             s.hapticsEnabled = defaults.bool(forKey: Keys.hapticsEnabled)
         }
-        if let iso = defaults.string(forKey: Keys.lastRolloverDate) {
-            s.lastRolloverDate = ISO8601DateFormatter.dateOnly.date(from: iso)
+        if let storedDay = defaults.string(forKey: Keys.lastRolloverDate) {
+            s.lastRolloverDate = decodeStoredDay(storedDay)
         }
         s.notificationPermissionPrompted = defaults.bool(forKey: Keys.notificationPermissionPrompted)
         return s
+    }
+
+    static func encodeStoredDay(_ date: Date, calendar: Calendar = .current) -> String {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        guard let year = components.year,
+              let month = components.month,
+              let day = components.day else {
+            return ""
+        }
+        return String(format: "%04d-%02d-%02d", year, month, day)
+    }
+
+    static func decodeStoredDay(_ value: String, calendar: Calendar = .current) -> Date? {
+        let parts = value.split(separator: "-")
+        guard parts.count == 3,
+              let year = Int(parts[0]),
+              let month = Int(parts[1]),
+              let day = Int(parts[2]) else {
+            return nil
+        }
+
+        var components = DateComponents()
+        components.calendar = calendar
+        components.timeZone = calendar.timeZone
+        components.year = year
+        components.month = month
+        components.day = day
+
+        guard let date = calendar.date(from: components) else {
+            return nil
+        }
+        return calendar.startOfDay(for: date)
     }
 
     private static func save(_ settings: AppSettings, to defaults: UserDefaults) {
@@ -80,7 +112,7 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         defaults.set(settings.weekStart.rawValue, forKey: Keys.weekStart)
         defaults.set(settings.hapticsEnabled, forKey: Keys.hapticsEnabled)
         if let d = settings.lastRolloverDate {
-            defaults.set(ISO8601DateFormatter.dateOnly.string(from: CalendarHelpers.startOfDay(d)), forKey: Keys.lastRolloverDate)
+            defaults.set(encodeStoredDay(d), forKey: Keys.lastRolloverDate)
         } else {
             defaults.removeObject(forKey: Keys.lastRolloverDate)
         }
