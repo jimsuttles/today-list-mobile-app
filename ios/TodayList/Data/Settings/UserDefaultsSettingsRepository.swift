@@ -74,7 +74,7 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         return s
     }
 
-    static func encodeStoredDay(_ date: Date, calendar: Calendar = .current) -> String {
+    nonisolated static func encodeStoredDay(_ date: Date, calendar: Calendar = .current) -> String {
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         guard let year = components.year,
               let month = components.month,
@@ -84,7 +84,7 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         return String(format: "%04d-%02d-%02d", year, month, day)
     }
 
-    static func decodeStoredDay(_ value: String, calendar: Calendar = .current) -> Date? {
+    nonisolated static func decodeStoredDay(_ value: String, calendar: Calendar = .current) -> Date? {
         let parts = value.split(separator: "-")
         guard parts.count == 3,
               let year = Int(parts[0]),
