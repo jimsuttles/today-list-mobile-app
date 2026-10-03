@@ -21,6 +21,7 @@ final class AppEnvironment {
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
     var suiteHandoffError: String?
+    var waitingForDisposition: WaitingForSourceDisposition?
     /// Completions during this app session on Today (used for the progress label).
     var sessionCompletedCount = 0
 
@@ -77,6 +78,7 @@ final class AppEnvironment {
         if case .needsReview = outcome {
             rolloverReview = outcome
         }
+        await refreshWaitingForDisposition()
         Task {
             for await s in settingsRepository.observeSettings() {
                 await MainActor.run { self.settings = s }
@@ -187,6 +189,44 @@ final class AppEnvironment {
         } catch {
             suiteHandoffError = error.localizedDescription
             return nil
+        }
+    }
+
+    func refreshWaitingForDisposition() async {
+        let store = WaitingForSourceDispositionStore()
+        for record in store.pendingRecords() {
+            guard SuiteHandoffStore.isCompleted(id: record.handoffID) else { continue }
+            if await taskRepository.getTask(id: record.sourceTaskID) == nil {
+                store.resolve(handoffID: record.handoffID)
+                continue
+            }
+            waitingForDisposition = record
+            return
+        }
+        waitingForDisposition = nil
+    }
+
+    func resolveWaitingForDisposition(
+        _ disposition: WaitingForSourceDisposition,
+        action: WaitingForSourceAction
+    ) async {
+        let store = WaitingForSourceDispositionStore()
+        defer {
+            store.resolve(handoffID: disposition.handoffID)
+            waitingForDisposition = nil
+        }
+
+        guard let task = await taskRepository.getTask(id: disposition.sourceTaskID) else { return }
+
+        switch action {
+        case .keep:
+            return
+        case .markDone:
+            await completeTask(task)
+        case .remove:
+            await notificationScheduler.cancelReminder(taskId: task.id)
+            try? await taskRepository.deleteTask(taskId: task.id, scope: .thisTask)
+            await refreshWidget()
         }
     }
 
