@@ -54,7 +54,8 @@ struct SuiteHandoffSourceTests {
         let containerURL = temporaryContainerURL()
         defer { try? FileManager.default.removeItem(at: containerURL) }
         let payload = SuiteHandoffStore.waitingForPayload(
-            for: makeTask(id: "task-123", title: "Review contract", notes: nil)
+            for: makeTask(id: "task-123", title: "Review contract", notes: nil),
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000)
         )
 
         try SuiteHandoffStore.writePending(payload, containerURL: containerURL)
