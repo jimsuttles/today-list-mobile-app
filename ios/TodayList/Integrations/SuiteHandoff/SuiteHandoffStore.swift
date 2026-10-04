@@ -22,9 +22,13 @@ enum SuiteHandoffStore {
         )
     }
 
-    static func waitingForPayload(for task: TaskItem, createdAt: Date = Date()) -> SuiteHandoffPayload {
+    static func waitingForPayload(
+        for task: TaskItem,
+        handoffID: UUID? = nil,
+        createdAt: Date = Date()
+    ) -> SuiteHandoffPayload {
         SuiteHandoffPayload(
-            id: waitingForHandoffID(sourceTaskID: task.id),
+            id: handoffID ?? waitingForHandoffID(sourceTaskID: task.id),
             sourceApp: .todayList,
             destinationApp: .waitingFor,
             createdAt: createdAt,
@@ -32,15 +36,19 @@ enum SuiteHandoffStore {
             notes: task.notes,
             metadata: [
                 "sourceTaskId": task.id,
-                "sourceLocation": task.location == .today ? "today" : "later"
+                "sourceLocation": task.location == .today ? "today" : "later",
+                "requestedDate": createdAt.ISO8601Format()
             ]
         )
     }
 
-    static func waitingForHandoffID(sourceTaskID: String) -> UUID {
+    static func waitingForHandoffID(sourceTaskID: String, attempt: Int = 1) -> UUID {
+        let sourceEntityID = attempt == 1
+            ? sourceTaskID
+            : "\(sourceTaskID)|waitingfor|attempt-\(attempt)"
         SuiteHandoffID.generate(
             sourceApp: .todayList,
-            sourceEntityID: sourceTaskID,
+            sourceEntityID: sourceEntityID,
             destinationApp: .waitingFor
         )
     }

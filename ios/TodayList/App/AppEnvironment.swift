@@ -13,6 +13,8 @@ final class AppEnvironment {
     let notificationScheduler: NotificationScheduler
     let rolloverManager: RolloverManager
     let recreateFromHistory: RecreateTaskFromHistoryUseCase
+    @ObservationIgnored private let waitingForDispositionStore: WaitingForSourceDispositionStore
+    @ObservationIgnored private let waitingForCompletionStatus: (UUID) -> Bool
 
     var settings: AppSettings
     var deepLinkTaskId: String?
@@ -21,6 +23,7 @@ final class AppEnvironment {
     var pendingUndo: UndoState?
     var rolloverReview: RolloverOutcome?
     var suiteHandoffError: String?
+    var sourceDispositionError: String?
     var waitingForDisposition: WaitingForSourceDisposition?
     /// Completions during this app session on Today (used for the progress label).
     var sessionCompletedCount = 0
@@ -31,7 +34,11 @@ final class AppEnvironment {
         let restoreTo: TaskLocation
     }
 
-    init(inMemory: Bool = false) {
+    init(
+        inMemory: Bool = false,
+        waitingForDispositionStore: WaitingForSourceDispositionStore? = nil,
+        waitingForCompletionStatus: ((UUID) -> Bool)? = nil
+    ) {
         let schema = Schema([
             PersistedTask.self,
             PersistedRecurrence.self,
@@ -44,11 +51,10 @@ final class AppEnvironment {
         let context = ModelContext(container)
         let tasks = SwiftDataTaskRepository(modelContext: context)
         let history = SwiftDataHistoryRepository(modelContext: context)
-        let settingsRepo = UserDefaultsSettingsRepository(
-            defaults: inMemory
-                ? UserDefaults(suiteName: "todaylist.tests.\(UUID().uuidString)")!
-                : .standard
-        )
+        let defaults = inMemory
+            ? UserDefaults(suiteName: "todaylist.tests.\(UUID().uuidString)")!
+            : .standard
+        let settingsRepo = UserDefaultsSettingsRepository(defaults: defaults)
         self.taskRepository = tasks
         self.historyRepository = history
         self.settingsRepository = settingsRepo
@@ -61,6 +67,10 @@ final class AppEnvironment {
             historyRepository: history,
             taskRepository: tasks
         )
+        self.waitingForDispositionStore = waitingForDispositionStore
+            ?? WaitingForSourceDispositionStore(defaults: defaults)
+        self.waitingForCompletionStatus = waitingForCompletionStatus
+            ?? SuiteHandoffStore.isCompleted
         self.settings = settingsRepo.currentSettings()
     }
 
@@ -193,11 +203,15 @@ final class AppEnvironment {
     }
 
     func refreshWaitingForDisposition() async {
-        let store = WaitingForSourceDispositionStore()
-        for record in store.pendingRecords() {
-            guard SuiteHandoffStore.isCompleted(id: record.handoffID) else { continue }
+        if let current = waitingForDisposition,
+           waitingForDispositionStore.contains(handoffID: current.handoffID) {
+            return
+        }
+
+        for record in waitingForDispositionStore.pendingRecords() {
+            guard waitingForCompletionStatus(record.handoffID) else { continue }
             if await taskRepository.getTask(id: record.sourceTaskID) == nil {
-                store.resolve(handoffID: record.handoffID)
+                waitingForDispositionStore.resolve(handoffID: record.handoffID)
                 continue
             }
             waitingForDisposition = record
@@ -210,27 +224,36 @@ final class AppEnvironment {
         _ disposition: WaitingForSourceDisposition,
         action: WaitingForSourceAction
     ) async {
-        let store = WaitingForSourceDispositionStore()
-        defer {
-            store.resolve(handoffID: disposition.handoffID)
+        guard waitingForDispositionStore.contains(handoffID: disposition.handoffID) else {
             waitingForDisposition = nil
+            return
         }
-
-        guard let task = await taskRepository.getTask(id: disposition.sourceTaskID) else { return }
+        guard let task = await taskRepository.getTask(id: disposition.sourceTaskID) else {
+            await finishWaitingForDisposition(disposition)
+            return
+        }
 
         switch action {
         case .keep:
-            return
+            await finishWaitingForDisposition(disposition)
         case .markDone:
-            await completeTask(task)
+            if await completeTask(task) {
+                await finishWaitingForDisposition(disposition)
+            }
         case .remove:
-            await notificationScheduler.cancelReminder(taskId: task.id)
-            try? await taskRepository.deleteTask(taskId: task.id, scope: .thisTask)
-            await refreshWidget()
+            do {
+                await notificationScheduler.cancelReminder(taskId: task.id)
+                try await taskRepository.deleteTask(taskId: task.id, scope: .thisTask)
+                await refreshWidget()
+                await finishWaitingForDisposition(disposition)
+            } catch {
+                sourceDispositionError = "The Today List task could not be removed. Please try again."
+            }
         }
     }
 
-    func completeTask(_ task: TaskItem) async {
+    @discardableResult
+    func completeTask(_ task: TaskItem) async -> Bool {
         do {
             if let eventId = try await taskRepository.completeTask(taskId: task.id) {
                 pendingUndo = UndoState(
@@ -247,10 +270,19 @@ final class AppEnvironment {
                 historyRepository.notifyCompletionsChanged()
                 await notificationScheduler.cancelReminder(taskId: task.id)
                 await refreshWidget()
+                return true
             }
         } catch {
             Analytics.log("complete_failed", parameters: ["error": error.localizedDescription])
         }
+        return false
+    }
+
+    private func finishWaitingForDisposition(_ disposition: WaitingForSourceDisposition) async {
+        waitingForDispositionStore.resolve(handoffID: disposition.handoffID)
+        waitingForDisposition = nil
+        await Task.yield()
+        await refreshWaitingForDisposition()
     }
 
     func undoPending() async {

@@ -37,6 +37,7 @@
 		95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */; };
 		98DBCED8B4FB461F414B7472 /* ProductivitySuiteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 44C00B1FD7926F07E505AB3C /* ProductivitySuiteCore */; };
 		9AD72B57BC41EE5E74859F85 /* TodayListWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9DA7042D73D98C5A844462B0 /* WaitingForSourceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB91BA21211B66B8463EED36 /* WaitingForSourceAction.swift */; };
 		A107989EDFF03D00E77ACA86 /* TodayListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDDAD17E092150B1BA332E4 /* TodayListWidget.swift */; };
 		A2483F620EC4B32B7D2888F4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4336D544DDF1CF9DA91A705B /* SettingsView.swift */; };
 		A35B88B41CFFDB8AD980667F /* RecreateTaskFromHistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00926601BC3A8F0ECBAE4A3A /* RecreateTaskFromHistoryUseCase.swift */; };
@@ -53,10 +54,12 @@
 		D73ED515802767BA8A85EAB2 /* RolloverReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C425BC309192A9F0FE1AB6 /* RolloverReviewView.swift */; };
 		D90EE06F1D3C0E8EF5D74215 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E8C237B502787FCC1B1C477 /* Assets.xcassets */; };
 		DD0D6519E044554B8C897B31 /* RolloverManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F252AB1286F233CC814DA4B1 /* RolloverManager.swift */; };
+		E0AE73BF79BC6DD6902914F4 /* WaitingForSourceDispositionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7E9DA575B5C5B33409D85F /* WaitingForSourceDispositionStore.swift */; };
 		E36D5FA6127ACBBB09BCBE91 /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A177BD22190631476BCE4A8B /* SwiftDataTaskRepository.swift */; };
 		EAAC1D75C5851BBA0D1B8C9D /* UserNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8A925534D1041C92612B25 /* UserNotificationScheduler.swift */; };
 		EFC3421DFD43A2A3D75967C6 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52105C1B95025114C0BF681 /* HistoryView.swift */; };
 		F4A42C673E5F795E0555F1F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A2C15AB1073B2F2870D5A /* Assets.xcassets */; };
+		F4AEE9FD1F1D3B4DC9A18EA3 /* UserDefaultsSettingsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D570AFFF3ABC3B3626A3E1F /* UserDefaultsSettingsRepositoryTests.swift */; };
 		F72DB1A563D9085D17C90E4E /* TodayListAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972463491450D0796113574B /* TodayListAppIntents.swift */; };
 		F82B1F7EAFCE595997752A31 /* WatchTodayStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453441D590B3E22A60BF32C0 /* WatchTodayStore.swift */; };
 		F8C690CC57CF04EEFEC093A4 /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC57BDDFB45EE1C2CAB05FC /* QuickAddView.swift */; };
@@ -140,6 +143,7 @@
 		2841CFCDDA9D1DB6FABA7B7B /* UserDefaultsSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSettingsRepository.swift; sourceTree = "<group>"; };
 		2C061B1567F0DAEF1D51F298 /* TodayListWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListWatchApp.swift; sourceTree = "<group>"; };
 		2C7A57F3D65DC75A616A432D /* SuiteHandoffStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteHandoffStore.swift; sourceTree = "<group>"; };
+		3D570AFFF3ABC3B3626A3E1F /* UserDefaultsSettingsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSettingsRepositoryTests.swift; sourceTree = "<group>"; };
 		3DC57BDDFB45EE1C2CAB05FC /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
 		412DEDCDA4FD2A931FD0FEA3 /* PersistedModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedModels.swift; sourceTree = "<group>"; };
 		4336D544DDF1CF9DA91A705B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 		C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodayListWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListRouteTests.swift; sourceTree = "<group>"; };
 		CB3F4144AE275733F6736964 /* TodayListWatchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListWatchWidget.swift; sourceTree = "<group>"; };
+		CB91BA21211B66B8463EED36 /* WaitingForSourceAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingForSourceAction.swift; sourceTree = "<group>"; };
 		CFD5A20D265AA514A9263D96 /* PhoneWatchBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneWatchBridge.swift; sourceTree = "<group>"; };
 		D0126D512EAE517BB5D52E07 /* RecurrenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngine.swift; sourceTree = "<group>"; };
 		D14154A856BAAA9946B5FD6D /* RecurrenceEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceEngineTests.swift; sourceTree = "<group>"; };
@@ -188,6 +193,7 @@
 		EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkifiedNotes.swift; sourceTree = "<group>"; };
 		F252AB1286F233CC814DA4B1 /* RolloverManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverManager.swift; sourceTree = "<group>"; };
 		F8451ADC6F519AED4CF3F822 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		FB7E9DA575B5C5B33409D85F /* WaitingForSourceDispositionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingForSourceDispositionStore.swift; sourceTree = "<group>"; };
 		FD8F01F9D5B36817B79D4594 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -289,6 +295,8 @@
 			isa = PBXGroup;
 			children = (
 				2C7A57F3D65DC75A616A432D /* SuiteHandoffStore.swift */,
+				CB91BA21211B66B8463EED36 /* WaitingForSourceAction.swift */,
+				FB7E9DA575B5C5B33409D85F /* WaitingForSourceDispositionStore.swift */,
 			);
 			path = SuiteHandoff;
 			sourceTree = "<group>";
@@ -449,6 +457,7 @@
 				A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */,
 				2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */,
 				CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */,
+				3D570AFFF3ABC3B3626A3E1F /* UserDefaultsSettingsRepositoryTests.swift */,
 			);
 			path = TodayListTests;
 			sourceTree = "<group>";
@@ -703,6 +712,9 @@
 						DevelopmentTeam = X6T2496428;
 						ProvisioningStyle = Automatic;
 					};
+					CEEA653636464657AB8917D4 = {
+						DevelopmentTeam = X6T2496428;
+					};
 					D5190E5F856881272CF1FEFD = {
 						DevelopmentTeam = X6T2496428;
 						ProvisioningStyle = Automatic;
@@ -817,6 +829,8 @@
 				69A23BEE89DFE37820BABB9D /* UndoBanner.swift in Sources */,
 				C212326BEECDA61F82C0CE7A /* UserDefaultsSettingsRepository.swift in Sources */,
 				EAAC1D75C5851BBA0D1B8C9D /* UserNotificationScheduler.swift in Sources */,
+				9DA7042D73D98C5A844462B0 /* WaitingForSourceAction.swift in Sources */,
+				E0AE73BF79BC6DD6902914F4 /* WaitingForSourceDispositionStore.swift in Sources */,
 				5446935281C9EDD5A2EA08C3 /* WidgetSnapshot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -848,6 +862,7 @@
 				905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */,
 				D07D3805043940B4D310D21C /* TaskRepositoryTests.swift in Sources */,
 				21CABB96064B6E346F7F2C13 /* TodayListRouteTests.swift in Sources */,
+				F4AEE9FD1F1D3B4DC9A18EA3 /* UserDefaultsSettingsRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1081,6 +1096,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1114,6 +1130,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = X6T2496428;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

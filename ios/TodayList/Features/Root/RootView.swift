@@ -95,6 +95,17 @@ struct RootView: View {
         } message: {
             Text(env.suiteHandoffError ?? "")
         }
+        .alert(
+            "Could Not Update Task",
+            isPresented: Binding(
+                get: { env.sourceDispositionError != nil },
+                set: { if !$0 { env.sourceDispositionError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { env.sourceDispositionError = nil }
+        } message: {
+            Text(env.sourceDispositionError ?? "")
+        }
         .preferredColorScheme(colorScheme)
         .onAppear {
             consumePendingIntentRoute()

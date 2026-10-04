@@ -14,6 +14,7 @@ struct TaskDetailView: View {
     @State private var repeatOption: RepeatOption = .none
     @State private var showDeleteConfirm = false
     @State private var promotionError: String?
+    @State private var waitingForError: String?
     @State private var isPromoting = false
     @State private var isMovingToWaitingFor = false
     @State private var original: TaskItem?
@@ -103,6 +104,11 @@ struct TaskDetailView: View {
             Button("OK", role: .cancel) { promotionError = nil }
         } message: {
             Text(promotionError ?? "")
+        }
+        .alert("Could Not Move to Waiting For", isPresented: waitingForErrorBinding) {
+            Button("OK", role: .cancel) { waitingForError = nil }
+        } message: {
+            Text(waitingForError ?? "")
         }
         .task { await load() }
     }
@@ -194,30 +200,30 @@ struct TaskDetailView: View {
 
         guard let task = await env.taskRepository.getTask(id: taskId),
               !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            promotionError = "This task needs a title before it can be moved to Waiting For."
+            waitingForError = "This task needs a title before it can be moved to Waiting For."
             return
         }
 
-        let payload = SuiteHandoffStore.waitingForPayload(for: task)
+        let coordinator = WaitingForSourceHandoffCoordinator(
+            dispositionStore: WaitingForSourceDispositionStore()
+        )
+        let prepared: WaitingForPreparedHandoff
         do {
-            try SuiteHandoffStore.writePending(payload)
-            WaitingForSourceDispositionStore().recordPending(
-                handoffID: payload.id,
-                sourceTaskID: task.id
-            )
+            prepared = try coordinator.prepare(task: task)
         } catch {
-            promotionError = "Waiting For handoff could not be prepared. Your Today List task was not changed."
+            waitingForError = "The Waiting For handoff could not be prepared. Your Today List task was not changed."
             return
         }
 
         let accepted = await withCheckedContinuation { continuation in
-            openURL(SuiteHandoffStore.waitingForURL(for: payload.id)) { accepted in
+            openURL(prepared.url) { accepted in
                 continuation.resume(returning: accepted)
             }
         }
+        coordinator.recordDestinationOpenResult(accepted, handoffID: prepared.payload.id)
 
         guard accepted else {
-            promotionError = "Waiting For could not be opened. Your Today List task was not changed."
+            waitingForError = "Waiting For could not be opened. Your Today List task was not changed."
             return
         }
     }
@@ -232,6 +238,13 @@ struct TaskDetailView: View {
         Binding(
             get: { promotionError != nil },
             set: { if !$0 { promotionError = nil } }
+        )
+    }
+
+    private var waitingForErrorBinding: Binding<Bool> {
+        Binding(
+            get: { waitingForError != nil },
+            set: { if !$0 { waitingForError = nil } }
         )
     }
 }
