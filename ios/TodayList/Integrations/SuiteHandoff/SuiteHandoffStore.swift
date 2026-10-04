@@ -46,7 +46,7 @@ enum SuiteHandoffStore {
         let sourceEntityID = attempt == 1
             ? sourceTaskID
             : "\(sourceTaskID)|waitingfor|attempt-\(attempt)"
-        SuiteHandoffID.generate(
+        return SuiteHandoffID.generate(
             sourceApp: .todayList,
             sourceEntityID: sourceEntityID,
             destinationApp: .waitingFor
