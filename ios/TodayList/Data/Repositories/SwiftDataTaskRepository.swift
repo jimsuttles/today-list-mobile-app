@@ -111,8 +111,7 @@ final class SwiftDataTaskRepository: TaskRepository {
         location: TaskLocation
     ) async throws -> TaskItem {
         let id = handoffID.uuidString
-        if let existing = try fetchTaskEntity(id: id),
-           existing.statusRaw != TaskStatus.deleted.rawValue {
+        if let existing = try fetchTaskEntity(id: id) {
             return mapTask(existing)
         }
 
