@@ -174,28 +174,18 @@ final class AppEnvironment {
 
         do {
             let payload = try SuiteHandoffStore.loadPending(id: id)
-            guard payload.version == SuiteHandoffConstants.schemaVersion else {
-                throw SuiteHandoffError.unsupportedVersion
-            }
-            guard payload.sourceApp == .quickCapture,
-                  payload.destinationApp == .todayList,
-                  !payload.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                throw SuiteHandoffError.invalidPayload
-            }
+            let importItem = try SuiteHandoffStore.todayListImport(from: payload)
 
-            let location: TaskLocation = payload.metadata["destination"] == "later" ? .later : .today
-            _ = try await taskRepository.createTask(
-                title: payload.title,
-                notes: payload.notes,
-                location: location,
-                reminderAt: nil,
-                scheduledDate: location == .today ? CalendarHelpers.today() : nil,
-                recurrence: nil
+            _ = try await taskRepository.createTaskFromHandoff(
+                handoffID: id,
+                title: importItem.title,
+                notes: importItem.notes,
+                location: importItem.location
             )
             UserDefaults.standard.set(true, forKey: key)
             try? SuiteHandoffStore.markCompleted(id: id)
             await refreshWidget()
-            return location
+            return importItem.location
         } catch {
             suiteHandoffError = error.localizedDescription
             return nil

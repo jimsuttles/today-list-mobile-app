@@ -104,6 +104,48 @@ final class SwiftDataTaskRepository: TaskRepository {
         return mapTask(task)
     }
 
+    func createTaskFromHandoff(
+        handoffID: UUID,
+        title: String,
+        notes: String?,
+        location: TaskLocation
+    ) async throws -> TaskItem {
+        let id = handoffID.uuidString
+        if let existing = try fetchTaskEntity(id: id) {
+            return mapTask(existing)
+        }
+
+        let now = Date()
+        let today = CalendarHelpers.today()
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let status = TaskStatus.from(location)
+        let sort = (try maxSortOrder(status: status)) + 1
+        let scheduled = location == .today ? today : nil
+
+        let task = PersistedTask(
+            id: id,
+            title: trimmed,
+            notes: notes,
+            statusRaw: status.rawValue,
+            sortOrder: sort,
+            createdAt: now,
+            updatedAt: now,
+            scheduledDate: scheduled,
+            reminderAt: nil,
+            recurrenceId: nil
+        )
+        modelContext.insert(task)
+        modelContext.insert(PersistedOccurrence(
+            taskId: id,
+            occurrenceDate: scheduled ?? today,
+            movedToLater: location == .later,
+            createdAt: now
+        ))
+        try modelContext.save()
+        notify(location)
+        return mapTask(task)
+    }
+
     func updateTask(_ task: TaskItem) async throws {
         guard let entity = try fetchTaskEntity(id: task.id) else { return }
         entity.title = task.title.trimmingCharacters(in: .whitespacesAndNewlines)

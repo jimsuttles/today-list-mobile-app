@@ -1,7 +1,52 @@
 import Foundation
 import ProductivitySuiteCore
 
+struct TodayListSuiteImport: Equatable {
+    let title: String
+    let notes: String?
+    let location: TaskLocation
+}
+
 enum SuiteHandoffStore {
+    static func todayListImport(from payload: SuiteHandoffPayload) throws -> TodayListSuiteImport {
+        guard payload.version == SuiteHandoffConstants.schemaVersion else {
+            throw SuiteHandoffError.unsupportedVersion
+        }
+        guard payload.destinationApp == .todayList else {
+            throw SuiteHandoffError.invalidPayload
+        }
+
+        let title = payload.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else {
+            throw SuiteHandoffError.invalidPayload
+        }
+
+        let destination = payload.metadata["destination"]?.lowercased()
+        let location: TaskLocation
+
+        switch payload.sourceApp {
+        case .quickCapture:
+            location = destination == "later" ? .later : .today
+
+        case .waitingFor:
+            guard let sourceFollowUpID = payload.metadata["sourceFollowUpId"],
+                  !sourceFollowUpID.isEmpty,
+                  destination == "today" || destination == "later" else {
+                throw SuiteHandoffError.invalidPayload
+            }
+            location = destination == "later" ? .later : .today
+
+        case .todayList, .top3, .dailyDecision:
+            throw SuiteHandoffError.invalidPayload
+        }
+
+        return TodayListSuiteImport(
+            title: title,
+            notes: payload.notes,
+            location: location
+        )
+    }
+
     static func top3Payload(for task: TaskItem, createdAt: Date = Date()) -> SuiteHandoffPayload {
         SuiteHandoffPayload(
             id: top3HandoffID(sourceTaskID: task.id),

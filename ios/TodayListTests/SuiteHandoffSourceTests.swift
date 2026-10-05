@@ -192,6 +192,125 @@ struct SuiteHandoffSourceTests {
         #expect(!url.absoluteString.contains("Secret notes"))
     }
 
+
+    @Test
+    func todayListImportPreservesQuickCaptureDefaultBehavior() throws {
+        let payload = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .quickCapture,
+            destinationApp: .todayList,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+            title: "Capture task",
+            notes: "Original notes"
+        )
+
+        let imported = try SuiteHandoffStore.todayListImport(from: payload)
+
+        #expect(imported.title == "Capture task")
+        #expect(imported.notes == "Original notes")
+        #expect(imported.location == .today)
+    }
+
+    @Test
+    func waitingForImportCreatesTodayMappingWithContext() throws {
+        let sourceID = UUID()
+        let payload = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .waitingFor,
+            destinationApp: .todayList,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+            title: "Review revised contract",
+            notes: "Check payment terms\n\nWaiting on: Acme",
+            metadata: [
+                "sourceFollowUpId": sourceID.uuidString,
+                "destination": "today"
+            ]
+        )
+
+        let imported = try SuiteHandoffStore.todayListImport(from: payload)
+
+        #expect(imported.title == "Review revised contract")
+        #expect(imported.notes == "Check payment terms\n\nWaiting on: Acme")
+        #expect(imported.location == .today)
+    }
+
+    @Test
+    func waitingForImportCreatesLaterMapping() throws {
+        let payload = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .waitingFor,
+            destinationApp: .todayList,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+            title: "Schedule installation",
+            notes: "Waiting on: Vendor Team",
+            metadata: [
+                "sourceFollowUpId": UUID().uuidString,
+                "destination": "later"
+            ]
+        )
+
+        let imported = try SuiteHandoffStore.todayListImport(from: payload)
+
+        #expect(imported.location == .later)
+        #expect(imported.title == "Schedule installation")
+    }
+
+    @Test
+    func waitingForImportRequiresExplicitDestinationAndSourceIdentity() {
+        let missingDestination = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .waitingFor,
+            destinationApp: .todayList,
+            createdAt: .now,
+            title: "Call customer",
+            metadata: ["sourceFollowUpId": UUID().uuidString]
+        )
+        let missingSourceID = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .waitingFor,
+            destinationApp: .todayList,
+            createdAt: .now,
+            title: "Call customer",
+            metadata: ["destination": "today"]
+        )
+
+        #expect(throws: SuiteHandoffError.self) {
+            try SuiteHandoffStore.todayListImport(from: missingDestination)
+        }
+        #expect(throws: SuiteHandoffError.self) {
+            try SuiteHandoffStore.todayListImport(from: missingSourceID)
+        }
+    }
+
+    @Test
+    func todayListImportRejectsWrongSourceOrDestination() {
+        let wrongSource = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .top3,
+            destinationApp: .todayList,
+            createdAt: .now,
+            title: "Not supported"
+        )
+        let wrongDestination = SuiteHandoffPayload(
+            id: UUID(),
+            sourceApp: .waitingFor,
+            destinationApp: .top3,
+            createdAt: .now,
+            title: "Not for Today List",
+            metadata: [
+                "sourceFollowUpId": UUID().uuidString,
+                "destination": "today"
+            ]
+        )
+
+        #expect(throws: SuiteHandoffError.self) {
+            try SuiteHandoffStore.todayListImport(from: wrongSource)
+        }
+        #expect(throws: SuiteHandoffError.self) {
+            try SuiteHandoffStore.todayListImport(from: wrongDestination)
+        }
+    }
+
     private func makeTask(id: String, title: String, notes: String?) -> TaskItem {
         TaskItem(
             id: id,

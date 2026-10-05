@@ -118,6 +118,70 @@ final class TaskRepositoryTests: XCTestCase {
         )
     }
 
+
+    func testSuiteHandoffCreationIsIdempotentByHandoffID() async throws {
+        let handoffID = UUID()
+
+        let first = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Review revised contract",
+            notes: "Waiting on: Acme",
+            location: .today
+        )
+        let replay = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Changed replay title",
+            notes: "Changed replay notes",
+            location: .later
+        )
+
+        var today: [TaskItem] = []
+        var later: [TaskItem] = []
+        for await tasks in env.taskRepository.observeTasks(location: .today) {
+            today = tasks
+            break
+        }
+        for await tasks in env.taskRepository.observeTasks(location: .later) {
+            later = tasks
+            break
+        }
+
+        XCTAssertEqual(first.id, handoffID.uuidString)
+        XCTAssertEqual(replay.id, first.id)
+        XCTAssertEqual(today.count, 1)
+        XCTAssertTrue(later.isEmpty)
+        XCTAssertEqual(today.first?.title, "Review revised contract")
+        XCTAssertEqual(today.first?.notes, "Waiting on: Acme")
+    }
+
+
+    func testCompletedSuiteHandoffReplayDoesNotRecreateTask() async throws {
+        let handoffID = UUID()
+        let first = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Review revised contract",
+            notes: nil,
+            location: .today
+        )
+
+        _ = try await env.taskRepository.completeTask(taskId: first.id)
+        let replay = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Replay",
+            notes: nil,
+            location: .today
+        )
+
+        var today: [TaskItem] = []
+        for await tasks in env.taskRepository.observeTasks(location: .today) {
+            today = tasks
+            break
+        }
+
+        XCTAssertEqual(replay.id, first.id)
+        XCTAssertTrue(today.isEmpty)
+    }
+
     func testSettingsRoundTrip() async {
         await env.settingsRepository.updateSettings {
             $0.themeMode = .dark
