@@ -176,13 +176,11 @@ final class AppEnvironment {
             let payload = try SuiteHandoffStore.loadPending(id: id)
             let importItem = try SuiteHandoffStore.todayListImport(from: payload)
 
-            _ = try await taskRepository.createTask(
+            _ = try await taskRepository.createTaskFromHandoff(
+                handoffID: id,
                 title: importItem.title,
                 notes: importItem.notes,
-                location: importItem.location,
-                reminderAt: nil,
-                scheduledDate: importItem.location == .today ? CalendarHelpers.today() : nil,
-                recurrence: nil
+                location: importItem.location
             )
             UserDefaults.standard.set(true, forKey: key)
             try? SuiteHandoffStore.markCompleted(id: id)
