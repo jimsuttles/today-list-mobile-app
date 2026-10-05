@@ -64,6 +64,26 @@ struct RootView: View {
         .sheet(item: rolloverBinding) { review in
             RolloverReviewView(unfinished: review.unfinished, missedDays: review.missedDays)
         }
+        .confirmationDialog(
+            "Follow-up created. What should happen to this Today List task?",
+            isPresented: Binding(
+                get: { env.waitingForDisposition != nil },
+                set: { if !$0 { env.waitingForDisposition = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            if let disposition = env.waitingForDisposition {
+                Button("Keep") {
+                    Task { await env.resolveWaitingForDisposition(disposition, action: .keep) }
+                }
+                Button("Mark Done") {
+                    Task { await env.resolveWaitingForDisposition(disposition, action: .markDone) }
+                }
+                Button("Remove", role: .destructive) {
+                    Task { await env.resolveWaitingForDisposition(disposition, action: .remove) }
+                }
+            }
+        }
         .alert(
             "Could Not Add Suite Item",
             isPresented: Binding(
@@ -75,6 +95,17 @@ struct RootView: View {
         } message: {
             Text(env.suiteHandoffError ?? "")
         }
+        .alert(
+            "Could Not Update Task",
+            isPresented: Binding(
+                get: { env.sourceDispositionError != nil },
+                set: { if !$0 { env.sourceDispositionError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { env.sourceDispositionError = nil }
+        } message: {
+            Text(env.sourceDispositionError ?? "")
+        }
         .preferredColorScheme(colorScheme)
         .onAppear {
             consumePendingIntentRoute()
@@ -83,6 +114,7 @@ struct RootView: View {
             if phase == .active {
                 consumePendingIntentRoute()
                 Task {
+                    await env.refreshWaitingForDisposition()
                     let outcome = await env.rolloverManager.evaluate()
                     if case .needsReview = outcome {
                         env.rolloverReview = outcome

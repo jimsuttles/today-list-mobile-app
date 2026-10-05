@@ -14,7 +14,9 @@ struct TaskDetailView: View {
     @State private var repeatOption: RepeatOption = .none
     @State private var showDeleteConfirm = false
     @State private var promotionError: String?
+    @State private var waitingForError: String?
     @State private var isPromoting = false
+    @State private var isMovingToWaitingFor = false
     @State private var original: TaskItem?
 
     private var noteLinks: [URL] {
@@ -65,6 +67,13 @@ struct TaskDetailView: View {
                     Label("Promote to Top 3", systemImage: "arrow.up.forward.app")
                 }
                 .disabled(isPromoting || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
+
+                Button {
+                    Task { await moveToWaitingFor() }
+                } label: {
+                    Label("Move to Waiting For", systemImage: "person.crop.circle.badge.clock")
+                }
+                .disabled(isMovingToWaitingFor || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
             }
             Section {
                 Button("Delete…", role: .destructive) {
@@ -95,6 +104,11 @@ struct TaskDetailView: View {
             Button("OK", role: .cancel) { promotionError = nil }
         } message: {
             Text(promotionError ?? "")
+        }
+        .alert("Could Not Move to Waiting For", isPresented: waitingForErrorBinding) {
+            Button("OK", role: .cancel) { waitingForError = nil }
+        } message: {
+            Text(waitingForError ?? "")
         }
         .task { await load() }
     }
@@ -179,6 +193,41 @@ struct TaskDetailView: View {
         }
     }
 
+    private func moveToWaitingFor() async {
+        guard !isMovingToWaitingFor else { return }
+        isMovingToWaitingFor = true
+        defer { isMovingToWaitingFor = false }
+
+        guard let task = await env.taskRepository.getTask(id: taskId),
+              !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            waitingForError = "This task needs a title before it can be moved to Waiting For."
+            return
+        }
+
+        let coordinator = WaitingForSourceHandoffCoordinator(
+            dispositionStore: WaitingForSourceDispositionStore()
+        )
+        let prepared: WaitingForPreparedHandoff
+        do {
+            prepared = try coordinator.prepare(task: task)
+        } catch {
+            waitingForError = "The Waiting For handoff could not be prepared. Your Today List task was not changed."
+            return
+        }
+
+        let accepted = await withCheckedContinuation { continuation in
+            openURL(prepared.url) { accepted in
+                continuation.resume(returning: accepted)
+            }
+        }
+        coordinator.recordDestinationOpenResult(accepted, handoffID: prepared.payload.id)
+
+        guard accepted else {
+            waitingForError = "Waiting For could not be opened. Your Today List task was not changed."
+            return
+        }
+    }
+
     private func delete(_ scope: DeleteScope) async {
         await env.notificationScheduler.cancelReminder(taskId: taskId)
         try? await env.taskRepository.deleteTask(taskId: taskId, scope: scope)
@@ -189,6 +238,13 @@ struct TaskDetailView: View {
         Binding(
             get: { promotionError != nil },
             set: { if !$0 { promotionError = nil } }
+        )
+    }
+
+    private var waitingForErrorBinding: Binding<Bool> {
+        Binding(
+            get: { waitingForError != nil },
+            set: { if !$0 { waitingForError = nil } }
         )
     }
 }

@@ -22,6 +22,49 @@ enum SuiteHandoffStore {
         )
     }
 
+    static func waitingForPayload(
+        for task: TaskItem,
+        handoffID: UUID? = nil,
+        createdAt: Date = Date()
+    ) -> SuiteHandoffPayload {
+        SuiteHandoffPayload(
+            id: handoffID ?? waitingForHandoffID(sourceTaskID: task.id),
+            sourceApp: .todayList,
+            destinationApp: .waitingFor,
+            createdAt: createdAt,
+            title: task.title,
+            notes: task.notes,
+            metadata: [
+                "sourceTaskId": task.id,
+                "sourceLocation": task.location == .today ? "today" : "later",
+                "requestedDate": createdAt.ISO8601Format()
+            ]
+        )
+    }
+
+    static func waitingForHandoffID(sourceTaskID: String, attempt: Int = 1) -> UUID {
+        let sourceEntityID = attempt == 1
+            ? sourceTaskID
+            : "\(sourceTaskID)|waitingfor|attempt-\(attempt)"
+        return SuiteHandoffID.generate(
+            sourceApp: .todayList,
+            sourceEntityID: sourceEntityID,
+            destinationApp: .waitingFor
+        )
+    }
+
+    static func waitingForURL(for id: UUID) -> URL {
+        do {
+            return try SuiteHandoffURL.makeURL(destination: .waitingFor, handoffID: id)
+        } catch {
+            preconditionFailure("ProductivitySuiteCore must support the Waiting For handoff URL.")
+        }
+    }
+
+    static func isCompleted(id: UUID) -> Bool {
+        (try? SuiteHandoffTransport().isCompleted(handoffID: id)) ?? false
+    }
+
     static func top3URL(for id: UUID) -> URL {
         do {
             return try SuiteHandoffURL.makeURL(destination: .top3, handoffID: id)
