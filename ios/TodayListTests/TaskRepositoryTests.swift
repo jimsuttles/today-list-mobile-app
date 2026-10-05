@@ -154,6 +154,34 @@ final class TaskRepositoryTests: XCTestCase {
         XCTAssertEqual(today.first?.notes, "Waiting on: Acme")
     }
 
+
+    func testCompletedSuiteHandoffReplayDoesNotRecreateTask() async throws {
+        let handoffID = UUID()
+        let first = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Review revised contract",
+            notes: nil,
+            location: .today
+        )
+
+        _ = try await env.taskRepository.completeTask(taskId: first.id)
+        let replay = try await env.taskRepository.createTaskFromHandoff(
+            handoffID: handoffID,
+            title: "Replay",
+            notes: nil,
+            location: .today
+        )
+
+        var today: [TaskItem] = []
+        for await tasks in env.taskRepository.observeTasks(location: .today) {
+            today = tasks
+            break
+        }
+
+        XCTAssertEqual(replay.id, first.id)
+        XCTAssertTrue(today.isEmpty)
+    }
+
     func testSettingsRoundTrip() async {
         await env.settingsRepository.updateSettings {
             $0.themeMode = .dark
