@@ -16,7 +16,8 @@ struct TaskDetailView: View {
     @State private var promotionError: String?
     @State private var waitingForError: String?
     @State private var isPromoting = false
-    @State private var isMovingToWaitingFor = false
+    @State private var isSendingToWaitingFor = false
+    @State private var showSendToWaitingForConfirm = false
     @State private var original: TaskItem?
 
     private var noteLinks: [URL] {
@@ -69,11 +70,12 @@ struct TaskDetailView: View {
                 .disabled(isPromoting || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
 
                 Button {
-                    Task { await moveToWaitingFor() }
+                    showSendToWaitingForConfirm = true
                 } label: {
-                    Label("Move to Waiting For", systemImage: "person.crop.circle.badge.clock")
+                    Label("Send to Waiting For", systemImage: "person.crop.circle.badge.clock")
                 }
-                .disabled(isMovingToWaitingFor || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
+                .accessibilityHint("Sends a copy to Waiting For. This task stays in Today List.")
+                .disabled(isSendingToWaitingFor || original?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false)
             }
             Section {
                 Button("Delete…", role: .destructive) {
@@ -100,12 +102,24 @@ struct TaskDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
+        .confirmationDialog(
+            "Send to Waiting For?",
+            isPresented: $showSendToWaitingForConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Send to Waiting For") {
+                Task { await sendToWaitingFor() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("A copy is sent to Waiting For, where you add who you're waiting on. This task stays in Today List.")
+        }
         .alert("Could Not Promote Task", isPresented: promotionErrorBinding) {
             Button("OK", role: .cancel) { promotionError = nil }
         } message: {
             Text(promotionError ?? "")
         }
-        .alert("Could Not Move to Waiting For", isPresented: waitingForErrorBinding) {
+        .alert("Could Not Send to Waiting For", isPresented: waitingForErrorBinding) {
             Button("OK", role: .cancel) { waitingForError = nil }
         } message: {
             Text(waitingForError ?? "")
@@ -193,14 +207,14 @@ struct TaskDetailView: View {
         }
     }
 
-    private func moveToWaitingFor() async {
-        guard !isMovingToWaitingFor else { return }
-        isMovingToWaitingFor = true
-        defer { isMovingToWaitingFor = false }
+    private func sendToWaitingFor() async {
+        guard !isSendingToWaitingFor else { return }
+        isSendingToWaitingFor = true
+        defer { isSendingToWaitingFor = false }
 
         guard let task = await env.taskRepository.getTask(id: taskId),
               !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            waitingForError = "This task needs a title before it can be moved to Waiting For."
+            waitingForError = "This task needs a title before it can be sent to Waiting For."
             return
         }
 
@@ -211,7 +225,7 @@ struct TaskDetailView: View {
         do {
             prepared = try coordinator.prepare(task: task)
         } catch {
-            waitingForError = "The Waiting For handoff could not be prepared. Your Today List task was not changed."
+            waitingForError = WaitingForSourceHandoffCoordinator.preparationFailureMessage(for: error)
             return
         }
 
@@ -223,7 +237,7 @@ struct TaskDetailView: View {
         coordinator.recordDestinationOpenResult(accepted, handoffID: prepared.payload.id)
 
         guard accepted else {
-            waitingForError = "Waiting For could not be opened. Your Today List task was not changed."
+            waitingForError = WaitingForSourceHandoffCoordinator.destinationNotOpenedMessage
             return
         }
     }
