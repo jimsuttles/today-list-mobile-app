@@ -89,6 +89,7 @@ struct TaskDetailView: View {
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
+        .modifier(PersistentNavigationBar())
         .confirmationDialog("Delete task", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Delete this task", role: .destructive) {
                 Task { await delete(.thisTask) }
@@ -246,5 +247,17 @@ struct TaskDetailView: View {
             get: { waitingForError != nil },
             set: { if !$0 { waitingForError = nil } }
         )
+    }
+}
+
+/// Keeps the navigation bar, and with it Save, visible while the form scrolls.
+/// On iPhone Duo (iOS 27.1) the bar otherwise minimizes on scroll and Save disappears.
+private struct PersistentNavigationBar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 27.0, *) {
+            content.toolbarMinimizationBehavior(.never, for: .navigationBar)
+        } else {
+            content
+        }
     }
 }
