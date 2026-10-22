@@ -172,6 +172,7 @@ struct RootView: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
             .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
         }
         .buttonStyle(.plain)
