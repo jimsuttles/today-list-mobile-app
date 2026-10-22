@@ -56,6 +56,9 @@ struct RootView: View {
             }
             .padding(.top, 8)
             .padding(.bottom, 8)
+            // Like the system tab bar: cap text growth so four tabs fit at accessibility
+            // sizes; each tab offers the Large Content Viewer instead.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             .background(Color.tlSurface.ignoresSafeArea(edges: .bottom))
         }
         .background(Color.tlBackground.ignoresSafeArea())
@@ -166,11 +169,15 @@ struct RootView: View {
                 Image(systemName: systemImage)
                 Text(title)
                     .font(.caption2)
+                    .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
             .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
         }
         .buttonStyle(.plain)
+        .accessibilityShowsLargeContentViewer {
+            Label(title, systemImage: systemImage)
+        }
         .accessibilityIdentifier("tab-\(title.lowercased())")
         .accessibilityAddTraits(tab == value ? .isSelected : [])
     }
