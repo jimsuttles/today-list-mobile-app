@@ -287,9 +287,6 @@ final class SwiftDataTaskRepository: TaskRepository {
 
     func uncompleteTask(completionEventId: String, restoreTo: TaskLocation) async throws {
         guard let event = try fetchCompletion(id: completionEventId) else { return }
-        defer {
-            modelContext.delete(event)
-        }
         if let taskId = event.taskId, let entity = try fetchTaskEntity(id: taskId) {
             if let occId = event.occurrenceId, let occ = try fetchOccurrence(id: occId) {
                 // Delete open occurrences after completed date
@@ -307,6 +304,8 @@ final class SwiftDataTaskRepository: TaskRepository {
             entity.sortOrder = (try maxSortOrder(status: status)) + 1
             entity.updatedAt = Date()
         }
+        // Delete before saving so the restore and the History removal persist together.
+        modelContext.delete(event)
         try modelContext.save()
         notify(.today)
         notify(.later)
