@@ -8,24 +8,21 @@ struct RootView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.scenePhase) private var scenePhase
     @State private var tab: AppTab = .today
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         @Bindable var env = env
         TabView(selection: $tab) {
-            TodayView()
-                .modifier(UndoBannerInset())
+            tabContent({ TodayView() })
                 .tabItem { Label("Today", systemImage: "sun.max") }
                 .tag(AppTab.today)
-            LaterView()
-                .modifier(UndoBannerInset())
+            tabContent({ LaterView() })
                 .tabItem { Label("Later", systemImage: "tray") }
                 .tag(AppTab.later)
-            HistoryView()
-                .modifier(UndoBannerInset())
+            tabContent({ HistoryView() })
                 .tabItem { Label("History", systemImage: "clock") }
                 .tag(AppTab.history)
-            SettingsView()
-                .modifier(UndoBannerInset())
+            tabContent({ SettingsView() })
                 .tabItem { Label("Settings", systemImage: "gearshape") }
                 .tag(AppTab.settings)
         }
@@ -159,31 +156,86 @@ struct RolloverReviewItem: Identifiable {
     let missedDays: Int
 }
 
-/// Shows the completion undo banner above the bottom edge of a tab's content,
-/// clear of the tab bar on iPhone and of the tab rail on iPhone Duo.
-private struct UndoBannerInset: ViewModifier {
+extension RootView {
+    /// Regular width (the unfolded iPhone Duo) uses the system tab rail. Compact
+    /// width (iPhone, the folded Duo, narrow Split View) keeps the custom bar.
+    private var usesCustomBar: Bool { horizontalSizeClass != .regular }
+
+    /// One bottom inset per tab holds the undo banner and, in compact width, the
+    /// custom tab bar. Nesting two insets hid the banner.
+    private func tabContent<Content: View>(_ content: () -> Content) -> some View {
+        content()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    PendingUndoBanner()
+                    if usesCustomBar { customTabBar }
+                }
+            }
+            .toolbar(usesCustomBar ? .hidden : .automatic, for: .tabBar)
+    }
+
+    private var customTabBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack {
+                customTab(.today, title: "Today", systemImage: "sun.max")
+                customTab(.later, title: "Later", systemImage: "tray")
+                customTab(.history, title: "History", systemImage: "clock")
+                customTab(.settings, title: "Settings", systemImage: "gearshape")
+            }
+            .padding(.vertical, 8)
+            // Like the system tab bar: cap text growth so four tabs fit at accessibility
+            // sizes; each tab offers the Large Content Viewer instead.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            .background(Color.tlSurface.ignoresSafeArea(edges: .bottom))
+        }
+    }
+
+    private func customTab(_ value: AppTab, title: String, systemImage: String) -> some View {
+        Button {
+            tab = value
+        } label: {
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                Text(title)
+                    .font(.caption2)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
+        }
+        .buttonStyle(.plain)
+        .accessibilityShowsLargeContentViewer {
+            Label(title, systemImage: systemImage)
+        }
+        .accessibilityIdentifier("tab-\(title.lowercased())")
+        .accessibilityAddTraits(tab == value ? .isSelected : [])
+    }
+}
+
+/// The completion undo banner, shown while an undo is pending.
+private struct PendingUndoBanner: View {
     @Environment(AppEnvironment.self) private var env
 
-    func body(content: Content) -> some View {
-        content.safeAreaInset(edge: .bottom, spacing: 0) {
-            if let pending = env.pendingUndo {
-                UndoBanner(
-                    title: pending.title,
-                    onUndo: {
-                        Task { @MainActor in
-                            await env.undoPending()
-                        }
-                    },
-                    onDismiss: {
-                        env.pendingUndo = nil
+    var body: some View {
+        if let pending = env.pendingUndo {
+            UndoBanner(
+                title: pending.title,
+                onUndo: {
+                    Task { @MainActor in
+                        await env.undoPending()
                     }
-                )
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .task(id: pending.completionEventId) {
-                    try? await Task.sleep(nanoseconds: 6_000_000_000)
-                    if env.pendingUndo?.completionEventId == pending.completionEventId {
-                        env.pendingUndo = nil
-                    }
+                },
+                onDismiss: {
+                    env.pendingUndo = nil
+                }
+            )
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .task(id: pending.completionEventId) {
+                try? await Task.sleep(nanoseconds: 6_000_000_000)
+                if env.pendingUndo?.completionEventId == pending.completionEventId {
+                    env.pendingUndo = nil
                 }
             }
         }
