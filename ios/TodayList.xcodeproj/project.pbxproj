@@ -35,6 +35,7 @@
 		905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */; };
 		91FF56F171CFA83711464D8D /* LaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7FFD4A209ABE726EF0B330 /* LaterView.swift */; };
 		95CC4A5338AD552464D8D811 /* LinkifiedNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC886D4028FEC0C093E06F2A /* LinkifiedNotes.swift */; };
+		985311BD4161AF757C0B708D /* UndoPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178F560FFAA360B14BD6F1BD /* UndoPersistenceTests.swift */; };
 		98DBCED8B4FB461F414B7472 /* ProductivitySuiteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 44C00B1FD7926F07E505AB3C /* ProductivitySuiteCore */; };
 		9AD72B57BC41EE5E74859F85 /* TodayListWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C6AFFC055BDECC2875DB423E /* TodayListWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9DA7042D73D98C5A844462B0 /* WaitingForSourceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB91BA21211B66B8463EED36 /* WaitingForSourceAction.swift */; };
@@ -138,6 +139,7 @@
 		02CCE3332C3F266D49DBA2AC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		03802F725D2136DE56C36DC6 /* TodayList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayList.entitlements; sourceTree = "<group>"; };
 		11E76F108A22589688ECF77C /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		178F560FFAA360B14BD6F1BD /* UndoPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoPersistenceTests.swift; sourceTree = "<group>"; };
 		1883280738381B06BA6FFE39 /* TodayTaskEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTaskEntity.swift; sourceTree = "<group>"; };
 		2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepositoryTests.swift; sourceTree = "<group>"; };
 		2841CFCDDA9D1DB6FABA7B7B /* UserDefaultsSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSettingsRepository.swift; sourceTree = "<group>"; };
@@ -457,6 +459,7 @@
 				A4FEF39EE991D665B0A4B821 /* SuiteHandoffSourceTests.swift */,
 				2063C3FD6EEC182CAE1DEE35 /* TaskRepositoryTests.swift */,
 				CACFBCDE049C9E9DD28DAD4C /* TodayListRouteTests.swift */,
+				178F560FFAA360B14BD6F1BD /* UndoPersistenceTests.swift */,
 				3D570AFFF3ABC3B3626A3E1F /* UserDefaultsSettingsRepositoryTests.swift */,
 			);
 			path = TodayListTests;
@@ -862,6 +865,7 @@
 				905B274C9E2A34C86E007F47 /* SuiteHandoffSourceTests.swift in Sources */,
 				D07D3805043940B4D310D21C /* TaskRepositoryTests.swift in Sources */,
 				21CABB96064B6E346F7F2C13 /* TodayListRouteTests.swift in Sources */,
+				985311BD4161AF757C0B708D /* UndoPersistenceTests.swift in Sources */,
 				F4AEE9FD1F1D3B4DC9A18EA3 /* UserDefaultsSettingsRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
