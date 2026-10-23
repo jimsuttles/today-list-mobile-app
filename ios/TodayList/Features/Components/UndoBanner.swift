@@ -33,6 +33,8 @@ struct UndoBanner: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .background(Color.tlPrimary)
+        // Extend the fill to the bottom edge only. The default (all edges) ran it
+        // under the trailing iPhone Duo tab rail, which is a safe-area inset.
+        .background(Color.tlPrimary, ignoresSafeAreaEdges: .bottom)
     }
 }
