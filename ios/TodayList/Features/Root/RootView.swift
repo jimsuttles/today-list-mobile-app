@@ -12,19 +12,23 @@ struct RootView: View {
 
     var body: some View {
         @Bindable var env = env
-        TabView(selection: $tab) {
-            tabContent({ TodayView() })
-                .tabItem { Label("Today", systemImage: "sun.max") }
-                .tag(AppTab.today)
-            tabContent({ LaterView() })
-                .tabItem { Label("Later", systemImage: "tray") }
-                .tag(AppTab.later)
-            tabContent({ HistoryView() })
-                .tabItem { Label("History", systemImage: "clock") }
-                .tag(AppTab.history)
-            tabContent({ SettingsView() })
-                .tabItem { Label("Settings", systemImage: "gearshape") }
-                .tag(AppTab.settings)
+        VStack(spacing: 0) {
+            TabView(selection: $tab) {
+                tabContent({ TodayView() })
+                    .tabItem { Label("Today", systemImage: "sun.max") }
+                    .tag(AppTab.today)
+                tabContent({ LaterView() })
+                    .tabItem { Label("Later", systemImage: "tray") }
+                    .tag(AppTab.later)
+                tabContent({ HistoryView() })
+                    .tabItem { Label("History", systemImage: "clock") }
+                    .tag(AppTab.history)
+                tabContent({ SettingsView() })
+                    .tabItem { Label("Settings", systemImage: "gearshape") }
+                    .tag(AppTab.settings)
+            }
+            PendingUndoBanner()
+            if usesCustomBar { customTabBar }
         }
         .background(Color.tlBackground.ignoresSafeArea())
         .animation(.easeInOut(duration: 0.2), value: env.pendingUndo?.completionEventId)
@@ -161,16 +165,10 @@ extension RootView {
     /// width (iPhone, the folded Duo, narrow Split View) keeps the custom bar.
     private var usesCustomBar: Bool { horizontalSizeClass != .regular }
 
-    /// One bottom inset per tab holds the undo banner and, in compact width, the
-    /// custom tab bar. Nesting two insets hid the banner.
+    /// In compact width the system tab bar is hidden; the custom bar and the undo
+    /// banner sit below the TabView, outside the tab pages, as on main.
     private func tabContent<Content: View>(_ content: () -> Content) -> some View {
         content()
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                VStack(spacing: 0) {
-                    PendingUndoBanner()
-                    if usesCustomBar { customTabBar }
-                }
-            }
             .toolbar(usesCustomBar ? .hidden : .automatic, for: .tabBar)
     }
 
