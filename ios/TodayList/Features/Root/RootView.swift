@@ -11,55 +11,23 @@ struct RootView: View {
 
     var body: some View {
         @Bindable var env = env
-        VStack(spacing: 0) {
-            Group {
-                switch tab {
-                case .today:
-                    TodayView()
-                case .later:
-                    LaterView()
-                case .history:
-                    HistoryView()
-                case .settings:
-                    SettingsView()
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            if let pending = env.pendingUndo {
-                UndoBanner(
-                    title: pending.title,
-                    onUndo: {
-                        Task { @MainActor in
-                            await env.undoPending()
-                        }
-                    },
-                    onDismiss: {
-                        env.pendingUndo = nil
-                    }
-                )
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .task(id: pending.completionEventId) {
-                    try? await Task.sleep(nanoseconds: 6_000_000_000)
-                    if env.pendingUndo?.completionEventId == pending.completionEventId {
-                        env.pendingUndo = nil
-                    }
-                }
-            }
-
-            Divider()
-            HStack {
-                tabButton(.today, title: "Today", systemImage: "sun.max")
-                tabButton(.later, title: "Later", systemImage: "tray")
-                tabButton(.history, title: "History", systemImage: "clock")
-                tabButton(.settings, title: "Settings", systemImage: "gearshape")
-            }
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-            // Like the system tab bar: cap text growth so four tabs fit at accessibility
-            // sizes; each tab offers the Large Content Viewer instead.
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-            .background(Color.tlSurface.ignoresSafeArea(edges: .bottom))
+        TabView(selection: $tab) {
+            TodayView()
+                .modifier(UndoBannerInset())
+                .tabItem { Label("Today", systemImage: "sun.max") }
+                .tag(AppTab.today)
+            LaterView()
+                .modifier(UndoBannerInset())
+                .tabItem { Label("Later", systemImage: "tray") }
+                .tag(AppTab.later)
+            HistoryView()
+                .modifier(UndoBannerInset())
+                .tabItem { Label("History", systemImage: "clock") }
+                .tag(AppTab.history)
+            SettingsView()
+                .modifier(UndoBannerInset())
+                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(AppTab.settings)
         }
         .background(Color.tlBackground.ignoresSafeArea())
         .animation(.easeInOut(duration: 0.2), value: env.pendingUndo?.completionEventId)
@@ -161,27 +129,6 @@ struct RootView: View {
         }
     }
 
-    private func tabButton(_ value: AppTab, title: String, systemImage: String) -> some View {
-        Button {
-            tab = value
-        } label: {
-            VStack(spacing: 4) {
-                Image(systemName: systemImage)
-                Text(title)
-                    .font(.caption2)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
-            .foregroundStyle(tab == value ? Color.tlPrimary : Color.tlOutline)
-        }
-        .buttonStyle(.plain)
-        .accessibilityShowsLargeContentViewer {
-            Label(title, systemImage: systemImage)
-        }
-        .accessibilityIdentifier("tab-\(title.lowercased())")
-        .accessibilityAddTraits(tab == value ? .isSelected : [])
-    }
 
     private var colorScheme: ColorScheme? {
         switch env.settings.themeMode {
@@ -210,4 +157,35 @@ struct RolloverReviewItem: Identifiable {
     let id = UUID()
     let unfinished: [TaskItem]
     let missedDays: Int
+}
+
+/// Shows the completion undo banner above the bottom edge of a tab's content,
+/// clear of the tab bar on iPhone and of the tab rail on iPhone Duo.
+private struct UndoBannerInset: ViewModifier {
+    @Environment(AppEnvironment.self) private var env
+
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if let pending = env.pendingUndo {
+                UndoBanner(
+                    title: pending.title,
+                    onUndo: {
+                        Task { @MainActor in
+                            await env.undoPending()
+                        }
+                    },
+                    onDismiss: {
+                        env.pendingUndo = nil
+                    }
+                )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .task(id: pending.completionEventId) {
+                    try? await Task.sleep(nanoseconds: 6_000_000_000)
+                    if env.pendingUndo?.completionEventId == pending.completionEventId {
+                        env.pendingUndo = nil
+                    }
+                }
+            }
+        }
+    }
 }
