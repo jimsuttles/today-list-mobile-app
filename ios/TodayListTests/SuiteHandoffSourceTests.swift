@@ -20,6 +20,111 @@ struct SuiteHandoffSourceTests {
         #expect(payload.metadata["sourceTaskId"] == task.id)
         #expect(payload.metadata["sourceLocation"] == "today")
         #expect(payload.metadata["requestedDate"] == createdAt.ISO8601Format())
+        #expect(payload.metadata["attempt"] == "1")
+        #expect(payload.metadata.keys.sorted() == ["attempt", "requestedDate", "sourceLocation", "sourceTaskId"])
+    }
+
+    /// Golden values computed independently (SHA-256 seed → UUIDv5 bits). Waiting For
+    /// pins the same values, so a change here breaks cross-app validation and dedupe.
+    @Test
+    func waitingForHandoffIDsMatchTheCrossAppContract() throws {
+        #expect(
+            SuiteHandoffStore.waitingForHandoffID(sourceTaskID: "task-123", attempt: 1)
+                == UUID(uuidString: "9F46ECC1-1EEA-5712-987B-A51874112FC6")
+        )
+        #expect(
+            SuiteHandoffStore.waitingForHandoffID(sourceTaskID: "task-123", attempt: 2)
+                == UUID(uuidString: "CFC74198-1876-5E7A-97CA-7D057061BDF4")
+        )
+        #expect(
+            SuiteHandoffStore.waitingForHandoffID(sourceTaskID: "task-123")
+                != SuiteHandoffStore.top3HandoffID(sourceTaskID: "task-123")
+        )
+    }
+
+    @Test
+    func laterAttemptPayloadCarriesItsAttemptAndMatchingID() {
+        let task = makeTask(id: "task-123", title: "Call vendor", notes: nil)
+
+        let payload = SuiteHandoffStore.waitingForPayload(for: task, attempt: 2)
+
+        #expect(payload.id == SuiteHandoffStore.waitingForHandoffID(sourceTaskID: "task-123", attempt: 2))
+        #expect(payload.metadata["attempt"] == "2")
+        #expect(payload.notes == nil)
+    }
+
+    @Test
+    func coordinatorPayloadMatchesItsRecordedAttempt() throws {
+        let store = WaitingForSourceDispositionStore(defaults: makeDefaults())
+        let coordinator = WaitingForSourceHandoffCoordinator(dispositionStore: store)
+        let containerURL = temporaryContainerURL()
+        defer { try? FileManager.default.removeItem(at: containerURL) }
+        let task = makeTask(id: "task-123", title: "Call vendor", notes: nil)
+        let first = store.prepareAttempt(sourceTaskID: task.id)
+        store.markDestinationOpenAccepted(handoffID: first.handoffID)
+        store.resolve(handoffID: first.handoffID)
+
+        let prepared = try coordinator.prepare(task: task, containerURL: containerURL)
+
+        #expect(prepared.payload.id == SuiteHandoffStore.waitingForHandoffID(sourceTaskID: task.id, attempt: 2))
+        #expect(prepared.payload.metadata["attempt"] == "2")
+        #expect(prepared.url.absoluteString == "waitingfor://v1/handoff/\(prepared.payload.id.uuidString)")
+    }
+
+    @Test @MainActor
+    func retryAfterDestinationCompletedReportsAlreadySentAndLeavesTaskUnchanged() async throws {
+        let store = WaitingForSourceDispositionStore(defaults: makeDefaults())
+        let coordinator = WaitingForSourceHandoffCoordinator(dispositionStore: store)
+        let containerURL = temporaryContainerURL()
+        defer { try? FileManager.default.removeItem(at: containerURL) }
+        let environment = AppEnvironment(inMemory: true)
+        let task = try await environment.taskRepository.createTask(
+            title: "Call supplier",
+            notes: "Ask about parts",
+            location: .later,
+            reminderAt: nil,
+            scheduledDate: nil,
+            recurrence: nil
+        )
+        let prepared = try coordinator.prepare(task: task, containerURL: containerURL)
+        coordinator.recordDestinationOpenResult(true, handoffID: prepared.payload.id)
+        try SuiteHandoffTransport(containerURL: containerURL).complete(handoffID: prepared.payload.id)
+
+        var thrown: Error?
+        do {
+            _ = try coordinator.prepare(task: task, containerURL: containerURL)
+        } catch {
+            thrown = error
+        }
+
+        let error = try #require(thrown)
+        #expect(
+            WaitingForSourceHandoffCoordinator.preparationFailureMessage(for: error)
+                == "This task is already in Waiting For. Your Today List task was not changed."
+        )
+        let unchanged = try #require(await environment.taskRepository.getTask(id: task.id))
+        #expect(unchanged.title == task.title)
+        #expect(unchanged.notes == task.notes)
+        #expect(unchanged.location == .later)
+        #expect(store.pendingRecords().map(\.handoffID) == [prepared.payload.id])
+    }
+
+    @Test
+    func preparationFailureMessagesNeverMentionTop3() {
+        let errors: [Error] = [
+            SuiteHandoffError.alreadyCompleted,
+            SuiteHandoffError.appGroupUnavailable,
+            SuiteHandoffCoreError.fileOperationFailed
+        ]
+        for error in errors {
+            let message = WaitingForSourceHandoffCoordinator.preparationFailureMessage(for: error)
+            #expect(!message.contains("Top 3"))
+            #expect(message.hasSuffix("Your Today List task was not changed."))
+        }
+        #expect(
+            WaitingForSourceHandoffCoordinator.destinationNotOpenedMessage
+                == "Waiting For could not be opened. Your Today List task was not changed."
+        )
     }
 
     @Test
